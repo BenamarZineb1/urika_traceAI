@@ -1,0 +1,20 @@
+{
+  "dependencies": {
+    "@angular/animations": "^21.2.9",
+    "@angular/cdk": "^21.2.7",
+    "@angular/material": "^21.2.7",
+    "@ngrx/effects": "^21.1.0",
+    "@ngrx/entity": "^21.1.0",
+    "@ngrx/store": "^21.1.0",
+    "@ngrx/store-devtools": "^21.1.0",
+    "axios": "^1.15.2",
+    "chart.js": "^4.5.1",
+    "d3": "^7.9.0",
+    "rxjs": "^7.8.2",
+    "socket.io-client": "^4.8.3"
+  },
+  "devDependencies": {
+    "@types/d3": "^7.4.3",
+    "@types/socket.io-client": "^1.4.36"
+  }
+}
