@@ -1,0 +1,276 @@
+:host {
+  --bg-dashboard: #030712;
+  --surface-base: #090d16;
+  --surface-card: #0d1527;
+  --border-subtle: rgba(255, 255, 255, 0.04);
+  --border-bright: rgba(255, 255, 255, 0.08);
+  --text-main: #f8fafc;
+  --text-muted: #64748b;
+
+  --primary-glow: #38bdf8;
+  --error-glow: #f43f5e;
+  --warning-glow: #fbbf24;
+  --success-glow: #10b981;
+
+  --transition-premium: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.explorer-wrapper {
+  padding: 1.5rem;
+  max-width: 1600px;
+  margin: 0 auto;
+  animation: explorerFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* --- EN-TÊTE DE PAGE --- */
+.view-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-subtle);
+
+  h1 {
+    font-size: 1.85rem;
+    font-weight: 800;
+    color: var(--text-main);
+    letter-spacing: -0.03em;
+    margin: 0;
+    background: linear-gradient(135deg, #ffffff 0%, var(--text-muted) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin: 0.4rem 0 0 0;
+    font-weight: 500;
+  }
+}
+
+/* --- BOUTON SYNCHRONISATION --- */
+.btn-sync {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(56, 189, 248, 0.05);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  color: var(--primary-glow);
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: var(--transition-premium);
+
+  .icon-sync {
+    width: 14px;
+    height: 14px;
+    transition: transform 0.5s ease;
+  }
+
+  &:hover {
+    background: rgba(56, 189, 248, 0.12);
+    border-color: var(--primary-glow);
+    box-shadow: 0 0 16px rgba(56, 189, 248, 0.15);
+    transform: translateY(-1px);
+
+    .icon-sync {
+      transform: rotate(180deg);
+    }
+  }
+}
+
+/* --- CONTENEUR TABLEAU --- */
+.data-card {
+  background: linear-gradient(145deg, var(--surface-card) 0%, var(--surface-base) 100%);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+  }
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+/* --- DATATABLE STRUCTURE --- */
+.u-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+
+  th {
+    padding: 1.1rem 1.5rem;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-bottom: 1px solid var(--border-subtle);
+    background: rgba(0, 0, 0, 0.15);
+  }
+
+  td {
+    padding: 1.1rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+    font-size: 0.85rem;
+    color: var(--text-main);
+    vertical-align: middle;
+  }
+
+  .row-entry {
+    transition: background 0.2s ease;
+    &:hover {
+      background: rgba(255, 255, 255, 0.01);
+    }
+  }
+
+  /* Badge Service */
+  .tag-service {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-subtle);
+    color: #cbd5e1;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* URL Code */
+  .code-url {
+    color: #94a3b8;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    background: rgba(0,0,0,0.15);
+    padding: 3px 6px;
+    border-radius: 4px;
+  }
+
+  /* Indicateur de Performance Gauges */
+  .perf-indicator {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: 180px;
+
+    .ms-val {
+      font-size: 0.85rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      width: 55px;
+      color: #fff;
+    }
+
+    .unit-ms {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-left: 1px;
+    }
+
+    .gauge {
+      flex: 1;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .gauge-fill {
+      height: 100%;
+      border-radius: 99px;
+      transition: width 0.5s ease-in-out;
+
+      &.ok { background: linear-gradient(90deg, #059669, var(--success-glow)); }
+      &.slow { background: linear-gradient(90deg, #d97706, var(--warning-glow)); }
+      &.error { background: linear-gradient(90deg, #dc2626, var(--error-glow)); }
+    }
+  }
+
+  /* Badges Graphiques de Statut */
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    &.ok {
+      background: rgba(16, 185, 129, 0.04);
+      border: 1px solid rgba(16, 185, 129, 0.15);
+      color: var(--success-glow);
+      .status-dot { background: var(--success-glow); }
+    }
+    &.slow {
+      background: rgba(251, 191, 36, 0.04);
+      border: 1px solid rgba(251, 191, 36, 0.15);
+      color: var(--warning-glow);
+      .status-dot { background: var(--warning-glow); }
+    }
+    &.error {
+      background: rgba(244, 63, 94, 0.04);
+      border: 1px solid rgba(244, 63, 94, 0.15);
+      color: var(--error-glow);
+      .status-dot { background: var(--error-glow); box-shadow: 0 0 8px var(--error-glow); }
+    }
+  }
+}
+
+/* --- BOUTON DIAGNOSTIC IA --- */
+.btn-ai {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #94a3b8;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-premium);
+
+  .icon-ai {
+    width: 14px;
+    height: 14px;
+    color: #818cf8;
+  }
+
+  &:hover {
+    border-color: rgba(99, 102, 241, 0.4);
+    background: rgba(99, 102, 241, 0.06);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+  }
+}
+
+@keyframes explorerFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}

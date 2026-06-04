@@ -1,10 +1,12 @@
 package com.urika.workflow.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore; // <-- Nouvel import obligatoire
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.Data;
 import java.util.List;
 
 @Entity
+@Data
 @Table(name = "workflows")
 public class Workflow {
 
@@ -14,19 +16,9 @@ public class Workflow {
 
     private String name;
 
-    private String status; // Ex: "ACTIVE", "COMPLETED", "FAILED"
+    private String status; // "ACTIVE", "COMPLETED", "FAILED"
 
-    @JsonIgnore // <-- CORRECTION : Coupe la boucle infinie pour Swagger
+    @JsonIgnore
     @OneToMany(mappedBy = "workflow", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Task> tasks;
-
-    // Getters et Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
-    public List<Task> getTasks() { return tasks; }
-    public void setTasks(List<Task> tasks) { this.tasks = tasks; }
 }

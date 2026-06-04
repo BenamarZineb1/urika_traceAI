@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class WorklowSystemApplication {
+public class WorfklowSystemApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(WorklowSystemApplication.class, args);
+		SpringApplication.run(WorfklowSystemApplication.class, args);
 	}
 
 }

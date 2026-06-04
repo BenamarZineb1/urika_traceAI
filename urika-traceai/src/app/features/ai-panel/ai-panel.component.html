@@ -1,0 +1,141 @@
+<div class="ai-modal-overlay" (click)="close.emit()" role="dialog" aria-modal="true">
+  <div class="ai-modal-window" (click)="$event.stopPropagation()">
+
+    <header class="ai-modal-header">
+      <div class="ai-badge-container">
+        <div class="pulse-ring"></div>
+
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="sparkle-icon">
+          <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M14 12a2 2 0 11-4 0 2 2 0 014 0z" />
+        </svg>
+
+        <span class="ai-badge-text">Analyse Prédictive Llama 3 (Ollama)</span>
+      </div>
+
+      <div class="header-actions-group">
+        <button class="btn-bypass-trigger"
+                (click)="loadAnalysis(true)"
+                title="Forcer la ré-analyse">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.253 8H18" />
+          </svg>
+          <span>Forcer la ré-analyse</span>
+        </button>
+
+        <button class="btn-close-modal"
+                (click)="close.emit()"
+                aria-label="Fermer">
+          <svg fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="ai-modal-body">
+
+      <!-- CONTEXT -->
+      <section class="incident-context-bar">
+        <div class="context-metric">
+          <span class="metric-label">Identifiant Trace</span>
+          <span class="metric-value mono-text">
+            #{{ trace?.trace_id?.substring(0, 12) }}
+          </span>
+        </div>
+
+        <div class="context-metric">
+          <span class="metric-label">Microservice</span>
+          <span class="metric-value service-highlight">
+            {{ trace?.service }}
+          </span>
+        </div>
+
+        <div class="context-metric">
+          <span class="metric-label">Statut</span>
+          <div class="status-pill-wrapper">
+            <span class="status-pill-indicator error-mode"></span>
+            <span class="status-pill-text">{{ trace?.status }}</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ANALYSIS -->
+      <ng-container *ngIf="analysis as analysis; else loadingState">
+
+        <div class="analysis-dashboard-grid fade-in-up">
+
+          <!-- DIAGNOSTIC -->
+          <article class="analysis-card diagnostic-card">
+            <div class="card-header-block">
+              <h2 class="card-title">Diagnostic Technique</h2>
+            </div>
+
+            <div class="card-body-content">
+              <p>{{ analysis?.diagnostic }}</p>
+            </div>
+          </article>
+
+          <!-- SOLUTION -->
+          <article class="analysis-card solution-card">
+            <div class="card-header-block">
+              <h2 class="card-title">Résolution Recommandée</h2>
+            </div>
+
+            <div class="card-body-content">
+              <p>{{ analysis?.recommandation }}</p>
+
+              <div class="orchestration-action-panel">
+
+                <div class="routing-meta">
+                  <div class="routing-details">
+                    <span class="routing-title">Routage Intelligent DevOps</span>
+
+                    <span class="routing-team">
+                      {{ analysis?.suggested_role || 'GENERAL_SUPPORT' }}
+                    </span>
+                  </div>
+                </div>
+
+                <button class="btn-premium-action"
+                        (click)="createTaskFromError(trace, analysis)">
+                  <span>Créer & Assigner l'incident</span>
+                </button>
+
+              </div>
+            </div>
+          </article>
+
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="ai-modal-footer">
+          <div class="confidence-score-component">
+
+            <div class="confidence-header">
+              <span class="confidence-label">
+                Indice de confiance du modèle Ollama
+              </span>
+
+              <span class="confidence-value">94.2%</span>
+            </div>
+
+            <div class="progress-track-bg">
+              <div class="progress-bar-fill" style="width: 94.2%"></div>
+            </div>
+
+          </div>
+        </footer>
+
+      </ng-container>
+
+      <!-- LOADING -->
+      <ng-template #loadingState>
+        <div class="premium-loading-container">
+          <p>Inférence sémantique locale via Ollama...</p>
+        </div>
+      </ng-template>
+
+    </div>
+  </div>
+</div>

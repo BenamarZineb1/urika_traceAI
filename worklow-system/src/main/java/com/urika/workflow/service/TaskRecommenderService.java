@@ -5,7 +5,6 @@ import com.urika.workflow.model.User;
 import com.urika.workflow.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,14 +17,20 @@ public class TaskRecommenderService {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Recommande et attribue le meilleur ingénieur disponible pour une tâche donnée.
+     * Sécurisé contre les valeurs nulles ou les listes d'utilisateurs vides.
+     */
     public Optional<User> recommendBestUserForTask(Task task) {
-        List<User> allUsers = userRepository.findAll();
+        // 1. Sécurité : Si aucun skill n'est requis ou fourni, on évite le crash SQL
+        if (task == null || task.getRequiredSkill() == null || task.getRequiredSkill().isBlank()) {
+            return Optional.empty();
+        }
 
-        return allUsers.stream()
-                // 1. Filtrage insensible à la casse (Java == java == JAVA)
-                .filter(user -> user.getSkills() != null &&
-                        user.getSkills().stream().anyMatch(skill -> skill.equalsIgnoreCase(task.getRequiredSkill().trim())))
-                // 2. Tri par charge de travail minimale
-                .min(Comparator.comparingInt(User::getCurrentWorkload));
+        // 2. Appel au Repository (qui trie déjà par u.currentWorkload ASC)
+        List<User> sortedUsers = userRepository.findBestUsers(task.getRequiredSkill());
+
+        // 3. Retourne le premier utilisateur (le moins chargé) s'il existe
+        return sortedUsers.isEmpty() ? Optional.empty() : Optional.of(sortedUsers.get(0));
     }
 }

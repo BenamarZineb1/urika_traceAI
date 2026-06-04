@@ -10,6 +10,7 @@ import com.urika.workflow.repository.WorkflowRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -30,55 +31,68 @@ public class TaskManagementService {
 
     @Transactional
     public Task createAndAssignTask(TaskCreationDTO dto) {
+
+        // 1. Gestion de la contrainte d'idempotence et du bypass 'force'
+        if (dto.getTraceId() != null && !dto.isForce()) {
+            Optional<Task> existingTask = taskRepository.findByTraceId(dto.getTraceId());
+            if (existingTask.isPresent()) {
+                System.out.println("⚠️ [Spring Boot] Tâche ignorée : La trace " + dto.getTraceId() + " est déjà associée à un ticket actif.");
+                return existingTask.get();
+            }
+        } else if (dto.getTraceId() != null && dto.isForce()) {
+            System.out.println("🔥 [Spring Boot] Mode FORCE activé. Génération d'un nouveau ticket pour la trace : " + dto.getTraceId());
+        }
+
+        // 2. Initialisation et normalisation stricte des entrées
         Task task = new Task();
         task.setTitle(dto.getTitle());
-        task.setRequiredSkill(dto.getRequiredSkill());
+        task.setDescription(dto.getDescription());
+        task.setTraceId(dto.getTraceId());
         task.setPriority(dto.getPriority());
 
-        // Lier la tâche au workflow s'il est fourni
+        String normalizedSkill = (dto.getRequiredSkill() != null) ? dto.getRequiredSkill().trim().toUpperCase() : "BACKEND";
+        task.setRequiredSkill(normalizedSkill);
+
         if (dto.getWorkflowId() != null) {
             Optional<Workflow> workflowOpt = workflowRepository.findById(dto.getWorkflowId());
             workflowOpt.ifPresent(task::setWorkflow);
         }
 
-        // --- Logique Intelligente : Assignation automatique ---
+        // 3. Moteur d'assignation intelligent
         Optional<User> bestUserOpt = recommenderService.recommendBestUserForTask(task);
 
         if (bestUserOpt.isPresent()) {
             User bestUser = bestUserOpt.get();
             task.setAssignee(bestUser);
+            task.setAssignedRole(normalizedSkill);
+            task.setStatus("PENDING");
 
-            // Augmenter la charge de travail de l'utilisateur
+            // Mutation de la charge de travail de l'ingénieur sélectionné
             bestUser.setCurrentWorkload(bestUser.getCurrentWorkload() + 1);
             userRepository.save(bestUser);
         } else {
-            // Optionnel : Gérer le cas où aucun utilisateur n'a la compétence requise
             task.setStatus("UNASSIGNED");
+            System.out.println("⚠️ [Spring Boot] Aucun ingénieur disponible pour la compétence : " + normalizedSkill);
         }
 
         return taskRepository.save(task);
     }
 
-    // --- NOUVELLE MÉTHODE : Clôture de la tâche et libération de l'employé ---
     @Transactional
     public Task completeTask(Long taskId) {
-        // 1. Récupérer la tâche
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new RuntimeException("Tâche introuvable avec l'ID : " + taskId));
 
-        // 2. Vérifier si elle n'est pas déjà terminée
         if ("COMPLETED".equals(task.getStatus())) {
             throw new RuntimeException("Cette tâche est déjà marquée comme terminée.");
         }
 
-        // 3. Mettre à jour la tâche
         task.setStatus("COMPLETED");
-        task.setCompletedAt(java.time.LocalDateTime.now());
+        task.setCompletedAt(LocalDateTime.now());
 
-        // 4. Libérer l'employé (réduire sa charge de travail)
+        // Libération de la charge de travail de l'ingénieur assigné
         User assignee = task.getAssignee();
         if (assignee != null) {
-            // On s'assure que la charge ne devienne jamais négative
             int newWorkload = Math.max(0, assignee.getCurrentWorkload() - 1);
             assignee.setCurrentWorkload(newWorkload);
             userRepository.save(assignee);

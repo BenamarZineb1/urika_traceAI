@@ -16,28 +16,28 @@ public class WorkflowAnalyticsService {
         this.taskRepository = taskRepository;
     }
 
-    // 1. Compter les tâches en attente
     public long countPendingTasks() {
         return taskRepository.countByStatus("PENDING");
     }
 
-    // 2. Calculer le temps moyen de résolution des tâches (en minutes)
     public double calculateAverageCompletionTimeMinutes() {
         List<Task> completedTasks = taskRepository.findByStatus("COMPLETED");
 
         if (completedTasks.isEmpty()) {
-            return 0.0; // Éviter la division par zéro s'il n'y a aucune tâche terminée
+            return 0.0;
         }
 
         long totalMinutes = 0;
+        int validTasksCount = 0;
 
         for (Task task : completedTasks) {
             if (task.getCreatedAt() != null && task.getCompletedAt() != null) {
                 Duration duration = Duration.between(task.getCreatedAt(), task.getCompletedAt());
                 totalMinutes += duration.toMinutes();
+                validTasksCount++;
             }
         }
 
-        return (double) totalMinutes / completedTasks.size();
+        return validTasksCount == 0 ? 0.0 : (double) totalMinutes / validTasksCount;
     }
 }

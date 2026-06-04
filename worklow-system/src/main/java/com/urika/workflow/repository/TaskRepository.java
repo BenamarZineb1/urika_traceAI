@@ -5,14 +5,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long> {
 
-    // Compte le nombre de tâches selon leur statut
     long countByStatus(String status);
 
-    // Récupère la liste des tâches selon leur statut
     List<Task> findByStatus(String status);
 
+    Optional<Task> findByTraceId(String traceId);
 }

@@ -1,9 +1,12 @@
 package com.urika.workflow.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
+
 import java.util.Set;
 
 @Entity
+@Data
 @Table(name = "users")
 public class User {
 
@@ -13,18 +16,8 @@ public class User {
 
     private String username;
 
-    @ElementCollection
-    private Set<String> skills; // Compétences de l'utilisateur (ex: "JAVA", "DATA_ANALYSIS")
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<String> skills;
 
-    private int currentWorkload; // Nombre de tâches actuellement assignées
-
-    // Getters et Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
-    public Set<String> getSkills() { return skills; }
-    public void setSkills(Set<String> skills) { this.skills = skills; }
-    public int getCurrentWorkload() { return currentWorkload; }
-    public void setCurrentWorkload(int currentWorkload) { this.currentWorkload = currentWorkload; }
+    private int currentWorkload;
 }

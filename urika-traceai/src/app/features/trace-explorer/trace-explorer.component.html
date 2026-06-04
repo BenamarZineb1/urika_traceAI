@@ -1,0 +1,75 @@
+<div class="explorer-wrapper">
+
+  <header class="view-header">
+    <div class="header-title-block">
+      <h1>Explorateur de Traces</h1>
+      <p class="subtitle">Analyse en temps réel et visualisation des flux de données Elasticsearch</p>
+    </div>
+    <button class="btn-sync" (click)="traceService.loadTraces()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="icon-sync">
+        <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+      </svg>
+      <span>Synchroniser</span>
+    </button>
+  </header>
+
+  <div class="data-card">
+    <div class="table-responsive">
+      <table class="u-table">
+        <thead>
+        <tr>
+          <th>Service Source</th>
+          <th>Endpoint API</th>
+          <th>Durée / Latence</th>
+          <th>Statut</th>
+          <th class="actions">Analyse Avancée</th>
+        </tr>
+        </thead>
+        <tbody>
+        @for (trace of traceService.traces(); track trace.trace_id) {
+        <tr class="row-entry">
+          <td>
+            <span class="tag-service">{{ trace.service }}</span>
+          </td>
+          <td>
+            <code class="code-url">{{ trace.endpoint }}</code>
+          </td>
+          <td>
+            <div class="perf-indicator">
+              <span class="ms-val">{{ trace.duration_ms }}<span class="unit-ms">ms</span></span>
+              <div class="gauge">
+                <div class="gauge-fill"
+                     [style.width.%]="(trace.duration_ms / 5000) * 100"
+                     [class]="trace.status">
+                </div>
+              </div>
+            </div>
+          </td>
+          <td>
+              <span class="status-badge" [class]="trace.status">
+                <span class="status-dot"></span>
+                <span class="status-text">{{ trace.status }}</span>
+              </span>
+          </td>
+          <td class="actions">
+            <button class="btn-ai" (click)="analyze(trace.trace_id)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon-ai">
+                <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+              </svg>
+              <span>Diagnostic IA</span>
+            </button>
+          </td>
+        </tr>
+        }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  @if (uiService.selectedTrace(); as selectedTrace) {
+  <app-ai-panel
+    [trace]="selectedTrace"
+    (close)="uiService.closeAnalysis()">
+  </app-ai-panel>
+  }
+</div>
