@@ -3,12 +3,16 @@
   <header class="view-header">
     <div class="header-title-block">
       <h1>Analyse du Cluster</h1>
-      <p class="subtitle">Télémétrie distribuée et état de santé des microservices</p>
+      <p class="subtitle">
+        Télémétrie distribuée et état de santé des microservices
+      </p>
     </div>
 
     <div class="system-status-indicator">
       <span class="pulse-dot active"></span>
-      <span class="status-text">Moteur d'ingestion synchronisé</span>
+      <span class="status-text">
+        Moteur d'ingestion synchronisé
+      </span>
     </div>
   </header>
 
@@ -16,8 +20,10 @@
 
     <!-- TOTAL TRACES -->
     <div class="metric-card card-total">
+
       <div class="card-header-meta">
         <span class="card-label">Flux Global</span>
+
         <div class="metric-icon-box box-blue">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
@@ -26,20 +32,28 @@
       </div>
 
       <div class="card-main-value">
-        <span class="counter">{{ totalTraces }}</span>
+        <span class="counter">{{ totalTraces() }}</span>
         <span class="unit">traces</span>
       </div>
 
       <div class="card-footer-trends">
-        <span class="trend-tag positive">📊 Elasticsearch live</span>
+        <span class="trend-tag positive">
+          📊 Elasticsearch live
+        </span>
       </div>
+
     </div>
 
     <!-- ERRORS -->
-    <div class="metric-card card-errors" [class.has-critical-errors]="errorCount > 0">
+    <div
+      class="metric-card card-errors"
+      [class.has-critical-errors]="errorCount() > 0"
+    >
 
       <div class="card-header-meta">
-        <span class="card-label">Taux d'erreurs</span>
+        <span class="card-label">
+          Taux d'erreurs
+        </span>
 
         <div class="metric-icon-box box-red">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -49,26 +63,37 @@
       </div>
 
       <div class="card-main-value error-color">
-        <span class="counter">{{ errorCount }}</span>
+        <span class="counter">{{ errorCount() }}</span>
         <span class="unit">incidents</span>
       </div>
 
       <div class="card-footer-trends">
-        <span class="trend-tag destructive" *ngIf="errorCount > 0">
+
+        <span
+          class="trend-tag destructive"
+          *ngIf="errorCount() > 0"
+        >
           ⚠️ Action requise
         </span>
 
-        <span class="trend-tag stable" *ngIf="errorCount === 0">
+        <span
+          class="trend-tag stable"
+          *ngIf="errorCount() === 0"
+        >
           ✅ Système stable
         </span>
+
       </div>
+
     </div>
 
     <!-- LATENCY -->
     <div class="metric-card card-latency">
 
       <div class="card-header-meta">
-        <span class="card-label">Performance</span>
+        <span class="card-label">
+          Performance
+        </span>
 
         <div class="metric-icon-box box-warning">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -79,7 +104,7 @@
       </div>
 
       <div class="card-main-value warning-color">
-        <span class="counter">{{ avgLatency }}</span>
+        <span class="counter">{{ avgLatency() }}</span>
         <span class="unit">ms</span>
       </div>
 
@@ -88,14 +113,15 @@
           ⚡ Latence moyenne
         </span>
       </div>
+
     </div>
 
   </section>
 
-  <!-- CHART -->
   <main class="dashboard-main-content">
 
     <article class="chart-card">
+
       <header class="chart-header">
 
         <div class="chart-title-group">
@@ -105,7 +131,9 @@
 
         <div class="live-pulse-badge">
           <span class="ping-animation"></span>
-          <span class="badge-label">STREAMING</span>
+          <span class="badge-label">
+            STREAMING
+          </span>
         </div>
 
       </header>
@@ -113,6 +141,7 @@
       <div class="chart-container">
         <canvas #latencyChart></canvas>
       </div>
+
     </article>
 
   </main>

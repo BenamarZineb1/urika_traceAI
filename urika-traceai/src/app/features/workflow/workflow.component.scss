@@ -157,7 +157,6 @@
     margin-bottom: 1rem;
   }
 
-  /* CORRIGÉ : Utilise data-service pour s'aligner sur ton HTML */
   .skill-tag {
     font-size: .65rem;
     font-weight: 700;
@@ -196,10 +195,7 @@
 
 .active-processing {
   border-left: 2px solid var(--warning, #fbbf24);
-  .processing-loader {
-    color: var(--warning, #fbbf24);
-    .icon-gear { width: 14px; height: 14px; animation: spin 4s linear infinite; }
-  }
+  
   .diagnostic-preview {
     background: rgba(99, 102, 241, 0.03);
     border: 1px solid rgba(99, 102, 241, 0.1);
@@ -209,6 +205,7 @@
     color: #a5b4fc;
     margin-bottom: 1.25rem;
     line-height: 1.4;
+    
     .ai-badge {
       font-size: 0.6rem;
       font-weight: 900;
@@ -225,7 +222,6 @@
   border-left: 2px solid var(--success, #10b981);
   opacity: 0.85;
   &:hover { opacity: 1; }
-  .success-shield { color: var(--success, #10b981); width: 14px; height: 14px; }
   .service-sub { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--text-muted); display: block; margin-bottom: 0.5rem; }
   .success-msg { font-size: 0.75rem; color: var(--success, #10b981); font-weight: 600; margin: 0; }
 }
@@ -251,7 +247,6 @@
   }
   &.finish {
     background: transparent; border: 1px solid rgba(16, 185, 129, 0.3); color: var(--success, #10b981);
-    .check-icon { width: 12px; height: 12px; }
     &:hover { background: rgba(16, 185, 129, 0.08); border-color: var(--success, #10b981); }
   }
 }
@@ -266,7 +261,6 @@
   text-align: center;
   border: 1px dashed rgba(255, 255, 255, 0.03);
   border-radius: 12px;
-  svg { width: 32px; height: 32px; margin-bottom: 0.75rem; color: #1e293b; }
   p { font-size: 0.8rem; font-weight: 600; color: #475569; margin: 0; }
 }
 

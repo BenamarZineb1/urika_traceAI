@@ -5,16 +5,19 @@ import {
   EventEmitter,
   inject,
   OnChanges,
-  SimpleChanges
+  SimpleChanges,
+  ChangeDetectorRef
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
 
-import { Trace, TraceAnalysis } from '../../core/models/trace.model';
+import { CommonModule } from '@angular/common';
+
+import {
+  Trace,
+  TraceAnalysis
+} from '../../core/models/trace.model';
+
 import { TraceService } from '../../core/services/trace.service';
-import { WorkflowService, Task } from '../../core/services/workflow.service';
-import { environment } from '../../../environments/environment';
+import { WorkflowService } from '../../core/services/workflow.service';
 
 @Component({
   selector: 'app-ai-panel',
@@ -25,66 +28,87 @@ import { environment } from '../../../environments/environment';
 })
 export class AiPanelComponent implements OnChanges {
 
-  @Input() trace!: Trace;
-  @Output() close = new EventEmitter<void>();
+  @Input({ required: true })
+  trace!: Trace;
 
-  private traceService = inject(TraceService);
-  private workflowService = inject(WorkflowService);
-  private http = inject(HttpClient);
+  @Output()
+  close = new EventEmitter<void>();
 
-  public analysis$!: Observable<TraceAnalysis>;
-  public isForcingLoad = false;
+  private readonly traceService = inject(TraceService);
+  private readonly workflowService = inject(WorkflowService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['trace'] && this.trace?.trace_id) {
-      this.loadAnalysis(false);
-    }
-  }
+  private currentTraceId: string | null = null;
+
+  public analysis: TraceAnalysis | null = null;
+  public loading = false;
+  public error: string | null = null;
 
   /**
-   * Charge l'analyse Ollama avec option de forçage pour bypasser le verrou Spring Boot
+   * Getter pour gérer proprement l'affichage de l'ID dans le template
    */
-  public loadAnalysis(forceBypass: boolean = false): void {
-    if (!this.trace?.trace_id) return;
+  get displayTraceId(): string {
+    return this.trace.trace_id || (this.trace as any).traceId;
+  }
 
-    if (forceBypass) {
-      this.isForcingLoad = true;
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log('[AI PANEL] Trace reçue :', this.trace);
 
-      // On crée une copie de la trace augmentée d'un flag dynamique de forçage
-      // On utilise un cast 'any' temporaire pour contourner la signature stricte à 1 argument de getAIAnalysis
-      const tracePayload = { ...this.trace, force: true };
-      this.analysis$ = this.traceService.getAIAnalysis(tracePayload as any);
+    const traceId = this.displayTraceId;
+    console.log('[AI PANEL] Trace ID :', traceId);
 
-      // Reset du loader d'inférence visuelle une fois la réponse émise
-      this.analysis$.subscribe({
-        next: () => this.isForcingLoad = false,
-        error: () => this.isForcingLoad = false
-      });
-    } else {
-      this.analysis$ = this.traceService.getAIAnalysis(this.trace);
+    if (!traceId) {
+      this.error = 'Aucun identifiant de trace trouvé.';
+      return;
     }
+
+    if (this.currentTraceId === traceId) {
+      return;
+    }
+
+    this.currentTraceId = traceId;
+    this.loadAnalysis(traceId);
+  }
+
+  private loadAnalysis(traceId: string): void {
+    this.loading = true;
+    this.error = null;
+    this.analysis = null;
+
+    console.log('[AI PANEL] Analyse demandée :', traceId);
+
+    this.traceService.analyzeTrace(traceId).subscribe({
+      next: (analysis: TraceAnalysis) => {
+        console.log('[AI PANEL] Analyse reçue :', analysis);
+
+        this.analysis = analysis;
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('[AI PANEL] Erreur API :', error);
+
+        this.error = error?.error?.detail || error?.message || 'Erreur lors de l’analyse IA';
+
+        this.currentTraceId = null;
+        this.loading = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   public createTaskFromError(trace: Trace, analysis: TraceAnalysis): void {
-    if (!analysis) return;
+    const taskDto = this.workflowService.mapToTaskDTO(trace, analysis);
 
-    const newTask: Task = {
-      traceId: trace.trace_id,
-      serviceName: trace.service,
-      endpoint: trace.endpoint || 'Endpoint non spécifié',
-      durationMs: trace.duration_ms || 0,
-      status: 'UNASSIGNED',
-      errorDetails: trace.message || 'Contenu de log vide',
-      aiDiagnostic: analysis.diagnostic
-    };
-
-    this.http.post<Task>(`${environment.apiUrl}/tasks`, newTask).subscribe({
+    this.workflowService.createTask(taskDto).subscribe({
       next: () => {
-        this.workflowService.loadTasks();
+        alert('Tâche créée avec succès.');
+        // Ferme la modale. Le service s'occupe déjà de rafraîchir le Signal des tâches !
         this.close.emit();
       },
-      error: (err) => {
-        console.error("[OLLAMA/API PIPELINE ERROR] Échec de la synchronisation :", err);
+      error: (error) => {
+        console.error('[AI PANEL] Erreur création tâche :', error);
+        alert('Impossible de créer la tâche.');
       }
     });
   }

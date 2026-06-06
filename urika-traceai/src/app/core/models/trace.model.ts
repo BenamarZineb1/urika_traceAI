@@ -1,16 +1,32 @@
+import { SkillType } from './task.model';
+
+export type TraceStatus =
+  | 'ok'
+  | 'slow'
+  | 'error';
+
 export interface Trace {
+
   trace_id: string;
-  timestamp: string;
+
   service: string;
+
   endpoint: string;
+
+  status: TraceStatus;
+
   duration_ms: number;
-  status: 'ok' | 'slow' | 'error';
-  message?: string; // rendu optionnel pour éviter crash si ES ne le renvoie pas
+
+  message?: string;
+
+  timestamp?: string;
 }
 
 export interface TraceAnalysis {
-  trace_id: string;
+
   diagnostic: string;
+
   recommandation: string;
-  suggested_role: 'FRONTEND' | 'BACKEND' | 'MOBILE' | 'DEVOPS' | 'QA' | 'DBA' | 'SECURITY' | 'PM';
+
+  suggested_role: SkillType;
 }

@@ -3,129 +3,241 @@
   <header class="view-header">
     <div class="title-block">
       <h1>Workflow de Correction</h1>
-      <p class="subtitle">Centre d'orchestration et de remédiation automatisée des incidents IA</p>
+      <p class="subtitle">
+        Centre d'orchestration et de remédiation automatisée des incidents IA
+      </p>
     </div>
-    <button class="btn-refresh" (click)="refreshTasks()" [disabled]="workflowService.loading()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="icon-sync" [class.spinning]="workflowService.loading()">
-        <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+
+    <button
+      class="btn-refresh"
+      (click)="refreshTasks()"
+      [disabled]="workflowService.loading()">
+
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.5"
+        class="icon-sync"
+        [class.spinning]="workflowService.loading()">
+
+        <path
+          d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
       </svg>
-      <span>{{ workflowService.loading() ? 'Analyse...' : 'Actualiser le flux' }}</span>
+
+      <span>
+        {{ workflowService.loading()
+          ? 'Analyse...'
+          : 'Actualiser le flux' }}
+      </span>
     </button>
   </header>
 
   @if (workflowService.error(); as err) {
-  <div class="error-banner">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon-alert">
-      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-    </svg>
-    <span>{{ err }}</span>
-  </div>
+
+    <div class="error-banner">
+      <span>{{ err }}</span>
+    </div>
+
   }
 
   <div class="kanban-board">
 
+    <!-- TODO -->
+
     <div class="kanban-column todo">
+
       <div class="column-header">
         <span class="status-dot"></span>
         <h3>À TRAITER</h3>
-        <span class="counter-badge">{{ todoTasks().length }}</span>
+        <span class="counter-badge">
+          {{ todoTasks().length }}
+        </span>
       </div>
 
       <div class="task-list">
+
         @for (task of todoTasks(); track task.id) {
-        <div class="task-card dynamic-entry">
-          <div class="card-top">
-            <span class="skill-tag" [attr.data-service]="task.serviceName">{{ task.serviceName }}</span>
-            <span class="trace-id" *ngIf="task.traceId">#{{ task.traceId.substring(0,8) }}</span>
+
+          <div class="task-card dynamic-entry">
+
+            <div class="card-top">
+
+              <span
+                class="skill-tag"
+                [attr.data-service]="task.serviceName || 'UNKNOWN'">
+
+                {{ task.serviceName || task.requiredSkill }}
+
+              </span>
+
+              @if (task.traceId) {
+
+                <span class="trace-id">
+                  #{{ task.traceId.substring(0,8) }}
+                </span>
+
+              }
+
+            </div>
+
+            <h4>
+              {{ task.endpoint || task.title }}
+            </h4>
+
+            <p>
+              {{ task.errorDetails || task.description }}
+            </p>
+
+            <div class="card-meta">
+              <span>
+                Latence :
+                <strong>
+                  {{ task.durationMs ?? 0 }} ms
+                </strong>
+              </span>
+            </div>
+
+            <div class="card-footer">
+
+              <button
+                class="btn-action start"
+                (click)="updateStatus(task.id, 'IN_PROGRESS')">
+
+                Prendre l'incident
+
+              </button>
+
+            </div>
+
           </div>
-          <h4>{{ task.endpoint }}</h4>
-          <p>{{ task.errorDetails || 'Aucun détail structurel fourni.' }}</p>
-          <div class="card-meta">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="meta-icon"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            <span>Latence : <strong>{{ task.durationMs }}ms</strong></span>
-          </div>
-          <div class="card-footer">
-            <button class="btn-action start" (click)="updateStatus(task.id, 'IN_PROGRESS')">
-              <span>Prendre l'incident</span>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="arrow-icon"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </button>
-          </div>
-        </div>
+
         } @empty {
-        <div class="empty-state">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-          <p>Aucun incident en attente.</p>
-        </div>
+
+          <div class="empty-state">
+            <p>Aucun incident en attente.</p>
+          </div>
+
         }
+
       </div>
+
     </div>
+
+    <!-- IN PROGRESS -->
 
     <div class="kanban-column progress">
+
       <div class="column-header">
-        <span class="status-dot animate-pulse"></span>
         <h3>EN COURS</h3>
-        <span class="counter-badge">{{ inProgressTasks().length }}</span>
+
+        <span class="counter-badge">
+          {{ inProgressTasks().length }}
+        </span>
       </div>
 
       <div class="task-list">
+
         @for (task of inProgressTasks(); track task.id) {
-        <div class="task-card active-processing">
-          <div class="card-top">
-            <span class="skill-tag" [attr.data-service]="task.serviceName">{{ task.serviceName }}</span>
-            <div class="processing-loader">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon-gear"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+
+          <div class="task-card active-processing">
+
+            <div class="card-top">
+
+              <span
+                class="skill-tag"
+                [attr.data-service]="task.serviceName || 'UNKNOWN'">
+
+                {{ task.serviceName || task.requiredSkill }}
+
+              </span>
+
             </div>
+
+            <h4>
+              {{ task.endpoint || task.title }}
+            </h4>
+
+            @if (task.aiDiagnostic) {
+
+              <p class="diagnostic-preview">
+                {{ task.aiDiagnostic }}
+              </p>
+
+            }
+
+            <div class="card-footer">
+
+              <button
+                class="btn-action finish"
+                (click)="updateStatus(task.id, 'COMPLETED')">
+
+                Marquer comme résolu
+
+              </button>
+
+            </div>
+
           </div>
-          <h4>{{ task.endpoint }}</h4>
-          <p class="diagnostic-preview" *ngIf="task.aiDiagnostic">
-            <span class="ai-badge">AI</span> {{ task.aiDiagnostic }}
-          </p>
-          <div class="card-footer">
-            <button class="btn-action finish" (click)="updateStatus(task.id, 'COMPLETED')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="check-icon"><polyline points="20 6 9 17 4 12"/></svg>
-              <span>Marquer comme résolu</span>
-            </button>
-          </div>
-        </div>
+
         } @empty {
-        <div class="empty-state">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          <p class="empty">Aucune intervention en cours.</p>
-        </div>
+
+          <div class="empty-state">
+            <p>Aucune intervention en cours.</p>
+          </div>
+
         }
+
       </div>
+
     </div>
 
+    <!-- DONE -->
+
     <div class="kanban-column done">
+
       <div class="column-header">
-        <span class="status-dot"></span>
         <h3>TERMINÉ</h3>
-        <span class="counter-badge">{{ doneTasks().length }}</span>
+
+        <span class="counter-badge">
+          {{ doneTasks().length }}
+        </span>
       </div>
 
       <div class="task-list">
+
         @for (task of doneTasks(); track task.id) {
-        <div class="task-card completed-success">
-          <div class="card-top">
-            <span class="skill-tag done-tag">RÉSOLU</span>
-            <div class="success-shield">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+
+          <div class="task-card completed-success">
+
+            <h4>
+              {{ task.endpoint || task.title }}
+            </h4>
+
+            <span class="service-sub">
+              {{ task.serviceName || task.requiredSkill }}
+            </span>
+
+            <div class="done-footer">
+              <span class="done-msg">
+                Correctif appliqué avec succès
+              </span>
             </div>
+
           </div>
-          <h4>{{ task.endpoint }}</h4>
-          <span class="service-sub">{{ task.serviceName }}</span>
-          <div class="done-footer">
-            <span class="done-msg">Correctif appliqué avec succès</span>
-          </div>
-        </div>
+
         } @empty {
-        <div class="empty-state">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
-          <p>Pas encore d'incidents résolus.</p>
-        </div>
+
+          <div class="empty-state">
+            <p>Pas encore d'incidents résolus.</p>
+          </div>
+
         }
+
       </div>
+
     </div>
 
   </div>
+
 </div>

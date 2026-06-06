@@ -1,3 +1,11 @@
+:host {
+  display: block;
+  height: 100vh;
+
+  --accent: #38bdf8;
+  --border: rgba(255,255,255,0.05);
+  --text-muted: #94a3b8;
+}
 .app-layout {
   display: flex;
   height: 100vh;

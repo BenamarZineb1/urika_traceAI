@@ -1,6 +1,18 @@
-import { Component, OnInit, inject, computed } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  inject,
+  computed
+} from '@angular/core';
+
 import { CommonModule } from '@angular/common';
-import { WorkflowService, Task } from '../../core/services/workflow.service';
+
+import { WorkflowService } from '../../core/services/workflow.service';
+
+import {
+  Task,
+  TaskStatus
+} from '../../core/models/task.model';
 
 @Component({
   selector: 'app-task-management',
@@ -10,31 +22,51 @@ import { WorkflowService, Task } from '../../core/services/workflow.service';
   styleUrls: ['./task-management.component.scss']
 })
 export class TaskManagementComponent implements OnInit {
-  protected workflowService = inject(WorkflowService);
 
-  todoTasks = computed(() =>
-    this.workflowService.tasks().filter((t: Task) => t.status === 'UNASSIGNED')
+  protected readonly workflowService =
+    inject(WorkflowService);
+
+  readonly todoTasks = computed(() =>
+    this.workflowService.tasks().filter(
+      (task: Task) =>
+        task.status === 'UNASSIGNED'
+    )
   );
 
-  inProgressTasks = computed(() =>
-    this.workflowService.tasks().filter((t: Task) => t.status === 'IN_PROGRESS')
+  readonly inProgressTasks = computed(() =>
+    this.workflowService.tasks().filter(
+      (task: Task) =>
+        task.status === 'IN_PROGRESS'
+    )
   );
 
-  doneTasks = computed(() =>
-    this.workflowService.tasks().filter((t: Task) => t.status === 'COMPLETED')
+  readonly doneTasks = computed(() =>
+    this.workflowService.tasks().filter(
+      (task: Task) =>
+        task.status === 'COMPLETED'
+    )
   );
 
   ngOnInit(): void {
-    this.refreshTasks();
+    this.workflowService.loadTasks();
   }
 
   refreshTasks(): void {
     this.workflowService.loadTasks();
   }
 
-  updateStatus(taskId: number | undefined, newStatus: 'UNASSIGNED' | 'IN_PROGRESS' | 'COMPLETED'): void {
-    if (taskId) {
-      this.workflowService.updateTaskStatus(taskId, newStatus);
+  updateStatus(
+    taskId: number | undefined,
+    newStatus: TaskStatus
+  ): void {
+
+    if (taskId === undefined) {
+      return;
     }
+
+    this.workflowService.updateTaskStatus(
+      taskId,
+      newStatus
+    );
   }
 }

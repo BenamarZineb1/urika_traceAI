@@ -1,56 +1,95 @@
 <div class="app-layout">
 
   <header class="mobile-top-bar">
+
     <div class="logo-area">
       <span class="logo-icon">U</span>
       <span class="logo-text">TraceAI</span>
     </div>
-    <button class="burger-btn" (click)="toggleMobileMenu()" aria-label="Menu">
+
+    <button
+      class="burger-btn"
+      (click)="toggleMobileMenu()">
+
       ☰
     </button>
+
   </header>
 
-  <nav class="side-nav" [class.open]="isMobileMenuOpen">
+  <nav
+    class="side-nav"
+    [class.open]="isMobileMenuOpen">
+
     <div class="logo-area hide-on-mobile">
       <span class="logo-icon">U</span>
       <span class="logo-text">TraceAI</span>
     </div>
 
     <div class="nav-links">
-      <a routerLink="/dashboard" routerLinkActive="active" (click)="closeMobileMenu()">
-        <span class="nav-label">📊 Tableau de bord</span>
+
+      <a
+        routerLink="/dashboard"
+        routerLinkActive="active"
+        (click)="closeMobileMenu()">
+
+        📊 Dashboard
       </a>
-      <a routerLink="/explorer" routerLinkActive="active" (click)="closeMobileMenu()">
-        <span class="nav-label">🔍 Explorateur</span>
+
+      <a
+        routerLink="/explorer"
+        routerLinkActive="active"
+        (click)="closeMobileMenu()">
+
+        🔍 Trace Explorer
       </a>
-      <a routerLink="/workflow" routerLinkActive="active" (click)="closeMobileMenu()">
-        <span class="nav-label">🛠️ Tâches & Workflow</span>
+
+      <a
+        routerLink="/workflow"
+        routerLinkActive="active"
+        (click)="closeMobileMenu()">
+
+        ⚙️ Workflow
       </a>
+
     </div>
 
     @if (uiService.selectedTrace()) {
-    <div class="ai-active-indicator" (click)="uiService.openAnalysis(uiService.selectedTrace()!); closeMobileMenu()">
-      <span class="sparkle">✨</span> Analyse en cours...
-    </div>
+
+      <div
+        class="ai-active-indicator"
+        (click)="closeMobileMenu()">
+
+        ✨ Analyse IA active
+
+      </div>
+
     }
 
-    <div class="nav-footer">
-      <span class="version">v2.0.4 - Urika Tech</span>
-    </div>
   </nav>
 
-  <div class="sidebar-overlay" [class.visible]="isMobileMenuOpen" (click)="closeMobileMenu()"></div>
+  <div
+    class="sidebar-overlay"
+    [class.visible]="isMobileMenuOpen"
+    (click)="closeMobileMenu()">
+  </div>
 
   <main class="content-area">
+
     <div class="responsive-container">
+
       <router-outlet></router-outlet>
+
     </div>
+
   </main>
 
   @if (uiService.selectedTrace(); as activeTrace) {
-  <app-ai-panel
-    [trace]="activeTrace"
-    (close)="uiService.closeAnalysis()">
-  </app-ai-panel>
+
+    <app-ai-panel
+      [trace]="activeTrace"
+      (close)="uiService.closeAnalysis()">
+    </app-ai-panel>
+
   }
+
 </div>

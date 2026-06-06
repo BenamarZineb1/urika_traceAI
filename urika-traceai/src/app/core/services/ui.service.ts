@@ -1,43 +1,49 @@
-import { Injectable, signal } from '@angular/core';
-import { Trace, TraceAnalysis } from '../models/trace.model';
+import {
+  Injectable,
+  signal
+} from '@angular/core';
+
+import {
+  Trace,
+  TraceAnalysis
+} from '../models/trace.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UiService {
 
-  // Trace sélectionnée dans le dashboard
-  selectedTrace = signal<Trace | null>(null);
+  public selectedTrace =
+    signal<Trace | null>(null);
 
-  // Analyse IA associée (IMPORTANT pour ton panel AI)
-  selectedAnalysis = signal<TraceAnalysis | null>(null);
+  public selectedAnalysis =
+    signal<TraceAnalysis | null>(null);
 
-  /**
-   * Ouvre le panel d'analyse
-   */
-  openAnalysis(trace: Trace): void {
+  public openAnalysis(
+    trace: Trace
+  ): void {
+
     this.selectedTrace.set(trace);
   }
 
-  /**
-   * Stocke aussi l'analyse IA
-   */
-  setAnalysis(analysis: TraceAnalysis): void {
-    this.selectedAnalysis.set(analysis);
+  public setAnalysis(
+    analysis: TraceAnalysis
+  ): void {
+
+    this.selectedAnalysis.set(
+      analysis
+    );
   }
 
-  /**
-   * Ferme le panel complètement
-   */
-  closeAnalysis(): void {
+  public closeAnalysis(): void {
+
     this.selectedTrace.set(null);
+
     this.selectedAnalysis.set(null);
   }
 
-  /**
-   * Reset partiel (utile si tu veux garder trace mais reset IA)
-   */
-  clearAnalysis(): void {
+  public clearAnalysis(): void {
+
     this.selectedAnalysis.set(null);
   }
 }

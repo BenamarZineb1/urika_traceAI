@@ -1,75 +1,123 @@
-import { Injectable, inject, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
-import { Trace, TraceAnalysis } from '../models/trace.model';
+import {
+  Injectable,
+  inject,
+  signal
+} from '@angular/core';
+
+import {
+  HttpClient
+} from '@angular/common/http';
+
+import {
+  Observable,
+  tap
+} from 'rxjs';
+
+import {
+  environment
+} from '../../../environments/environment';
+
+import {
+  Trace,
+  TraceAnalysis
+} from '../models/trace.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TraceService {
 
-  private http = inject(HttpClient);
+  private readonly http =
+    inject(HttpClient);
 
-  private readonly API_URL = 'http://localhost:8000/api';
+  private readonly apiUrl =
+    environment.aiApiUrl;
 
-  // State global des traces
-  public traces = signal<Trace[]>([]);
-  public loading = signal<boolean>(false);
-  public error = signal<string | null>(null);
+  public traces =
+    signal<Trace[]>([]);
 
-  /**
-   * Charger toutes les traces (state + observable clean)
-   */
+  public loading =
+    signal(false);
+
+  public error =
+    signal<string | null>(null);
+
   public loadTraces(): void {
+
     this.loading.set(true);
     this.error.set(null);
 
-    this.http.get<Trace[]>(`${this.API_URL}/traces`)
-      .subscribe({
-        next: (data) => {
-          this.traces.set(data);
-          this.loading.set(false);
-        },
-        error: (err) => {
-          console.error('Erreur Backend:', err);
-          this.error.set('Impossible de charger les traces');
-          this.loading.set(false);
-        }
-      });
+    this.http.get<Trace[]>(
+      `${this.apiUrl}/traces`
+    )
+    .subscribe({
+
+      next: (data) => {
+
+        this.traces.set(data);
+        this.loading.set(false);
+      },
+
+      error: (err) => {
+
+        console.error(err);
+
+        this.error.set(
+          'Impossible de charger les traces'
+        );
+
+        this.loading.set(false);
+      }
+    });
   }
 
-  /**
-   * Version observable pure (si besoin dans components)
-   */
   public getTraces(): Observable<Trace[]> {
-    return this.http.get<Trace[]>(`${this.API_URL}/traces`);
-  }
 
-  /**
-   * Analyse IA d’une trace (Ollama via FastAPI)
-   */
-  public analyzeTrace(traceId: string): Observable<TraceAnalysis> {
-    return this.http.get<TraceAnalysis>(
-      `${this.API_URL}/analyze/${traceId}`
+    return this.http.get<Trace[]>(
+      `${this.apiUrl}/traces`
     );
   }
 
-  /**
-   * Version simple basée sur objet Trace
-   */
-  public analyzeFromTrace(trace: Trace): Observable<TraceAnalysis> {
-    return this.analyzeTrace(trace.trace_id);
+  public analyzeTrace(
+    traceId: string
+  ): Observable<TraceAnalysis> {
+
+    return this.http.get<TraceAnalysis>(
+      `${this.apiUrl}/analyze/${traceId}`
+    );
   }
 
-  /**
-   * Version avancée (future usage: refresh cache UI après analyse)
-   */
-  public analyzeAndRefresh(trace: Trace): Observable<TraceAnalysis> {
-    return this.http.get<TraceAnalysis>(
-      `${this.API_URL}/analyze/${trace.trace_id}`
+  public analyzeFromTrace(
+    trace: Trace
+  ): Observable<TraceAnalysis> {
+
+    return this.analyzeTrace(
+      trace.trace_id
+    );
+  }
+
+  public getAIAnalysis(
+    trace: Trace
+  ): Observable<TraceAnalysis> {
+
+    return this.analyzeTrace(
+      trace.trace_id
+    );
+  }
+
+  public analyzeAndRefresh(
+    trace: Trace
+  ): Observable<TraceAnalysis> {
+
+    return this.analyzeTrace(
+      trace.trace_id
     ).pipe(
+
       tap(() => {
-        console.log(`Analyse IA terminée pour ${trace.trace_id}`);
+
+        console.log(
+          `Analyse terminée : ${trace.trace_id}`
+        );
       })
     );
   }
