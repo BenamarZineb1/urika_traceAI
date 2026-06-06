@@ -71,7 +71,7 @@ public class TaskManagementService {
             bestUser.setCurrentWorkload(bestUser.getCurrentWorkload() + 1);
             userRepository.save(bestUser);
         } else {
-            task.setStatus("UNASSIGNED");
+            task.setStatus("PENDING");
             System.out.println("⚠️ [Spring Boot] Aucun ingénieur disponible pour la compétence : " + normalizedSkill);
         }
 

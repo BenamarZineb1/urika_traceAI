@@ -12,24 +12,29 @@ import { Task } from '../../core/models/task.model';
 })
 export class WorkflowComponent implements OnInit {
 
-  // Utilisation de protected pour permettre l'accès direct depuis le template HTML
   protected readonly workflowService = inject(WorkflowService);
 
   /**
-   * Filtrage réactif des tâches par colonne via computed()
+   * Tâches en attente
    */
   readonly todoTasks = computed(() =>
     this.workflowService.tasks().filter(
-      (t: Task) => t.status === 'UNASSIGNED'
+      (t: Task) => t.status === 'PENDING'
     )
   );
 
+  /**
+   * Tâches en cours
+   */
   readonly inProgressTasks = computed(() =>
     this.workflowService.tasks().filter(
       (t: Task) => t.status === 'IN_PROGRESS'
     )
   );
 
+  /**
+   * Tâches terminées
+   */
   readonly doneTasks = computed(() =>
     this.workflowService.tasks().filter(
       (t: Task) => t.status === 'COMPLETED'
@@ -38,6 +43,11 @@ export class WorkflowComponent implements OnInit {
 
   ngOnInit(): void {
     this.workflowService.loadTasks();
+
+    // Debug
+    setTimeout(() => {
+      console.log('TASKS CHARGÉES :', this.workflowService.tasks());
+    }, 1000);
   }
 
   refresh(): void {
@@ -45,12 +55,24 @@ export class WorkflowComponent implements OnInit {
   }
 
   start(task: Task): void {
-    if (!task.id) return;
-    this.workflowService.updateTaskStatus(task.id, 'IN_PROGRESS');
+    if (!task.id) {
+      return;
+    }
+
+    this.workflowService.updateTaskStatus(
+      task.id,
+      'IN_PROGRESS'
+    );
   }
 
   finish(task: Task): void {
-    if (!task.id) return;
-    this.workflowService.updateTaskStatus(task.id, 'COMPLETED');
+    if (!task.id) {
+      return;
+    }
+
+    this.workflowService.updateTaskStatus(
+      task.id,
+      'COMPLETED'
+    );
   }
 }

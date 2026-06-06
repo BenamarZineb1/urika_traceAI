@@ -29,7 +29,7 @@ export class TaskManagementComponent implements OnInit {
   readonly todoTasks = computed(() =>
     this.workflowService.tasks().filter(
       (task: Task) =>
-        task.status === 'UNASSIGNED'
+        task.status === 'PENDING'
     )
   );
 

@@ -9,7 +9,7 @@ export type SkillType =
   | 'PM';
 
 export type TaskStatus =
-  | 'UNASSIGNED'
+  | 'PENDING'
   | 'IN_PROGRESS'
   | 'COMPLETED';
 

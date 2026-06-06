@@ -1,184 +1,111 @@
 <div class="workflow-container">
 
-  <header class="view-header">
-    <div class="title-block">
-      <h1>Workflow de Correction</h1>
-      <p class="subtitle">
-        Centre d'orchestration et de remédiation des incidents IA
+  <h1>Workflow de Correction</h1>
+
+  <button (click)="refresh()">
+    Actualiser
+  </button>
+
+  <hr>
+
+  <h2>
+    À TRAITER ({{ todoTasks().length }})
+  </h2>
+
+  @for (task of todoTasks(); track task.id) {
+
+    <div
+      style="
+        border:1px solid #ccc;
+        padding:15px;
+        margin:10px 0;
+        border-radius:8px;
+      "
+    >
+
+      <h3>{{ task.title }}</h3>
+
+      <p>
+        <strong>ID :</strong>
+        {{ task.id }}
       </p>
+
+      <p>
+        <strong>Trace :</strong>
+        {{ task.traceId }}
+      </p>
+
+      <p>
+        <strong>Statut :</strong>
+        {{ task.status }}
+      </p>
+
+      <p>
+        <strong>Compétence :</strong>
+        {{ task.requiredSkill }}
+      </p>
+
+      <p>
+        {{ task.description }}
+      </p>
+
+      <button (click)="start(task)">
+        Démarrer
+      </button>
+
     </div>
 
-    <button
-      class="btn-refresh"
-      (click)="refresh()"
-      [disabled]="workflowService.loading()">
+  } @empty {
 
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2.5"
-        class="icon-refresh"
-        [class.spinning]="workflowService.loading()">
-        <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
-      </svg>
+    <p>Aucune tâche trouvée.</p>
 
-      <span>
-        {{ workflowService.loading() ? 'Chargement…' : 'Actualiser le flux' }}
-      </span>
-    </button>
-  </header>
-
-  @if (workflowService.error(); as err) {
-    <div class="error-banner">
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        class="icon-alert">
-        <circle cx="12" cy="12" r="10"/>
-        <line x1="12" y1="8" x2="12" y2="12"/>
-        <line x1="12" y1="16" x2="12.01" y2="16"/>
-      </svg>
-      <span>{{ err }}</span>
-    </div>
   }
 
-  <div class="kanban-board">
+  <hr>
 
-    <section class="kanban-column todo">
-      <header class="column-header">
-        <span class="status-dot"></span>
-        <h3>À TRAITER</h3>
-        <span class="badge">{{ todoTasks().length }}</span>
-      </header>
+  <h2>
+    EN COURS ({{ inProgressTasks().length }})
+  </h2>
 
-      <div class="task-list">
-        @for (task of todoTasks(); track task.id) {
-          <article class="task-card fade-in">
-            <div class="card-top">
-              <span
-                class="skill-tag"
-                [attr.data-service]="task.requiredSkill || task.serviceName || 'UNKNOWN'">
-                {{ task.requiredSkill || task.serviceName || 'UNKNOWN' }}
-              </span>
+  @for (task of inProgressTasks(); track task.id) {
 
-              @if (task.traceId) {
-                <span class="trace-id">
-                  #{{ task.traceId.substring(0, 8) }}
-                </span>
-              }
-            </div>
+    <div
+      style="
+        border:1px solid #ccc;
+        padding:15px;
+        margin:10px 0;
+        border-radius:8px;
+      "
+    >
+      <h3>{{ task.title }}</h3>
 
-            <h4>{{ task.endpoint || task.title }}</h4>
+      <button (click)="finish(task)">
+        Terminer
+      </button>
+    </div>
 
-            <p class="error-details">
-              {{ task.errorDetails || task.description || 'Aucun détail structurel fourni.' }}
-            </p>
+  }
 
-            <div class="card-meta">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                class="meta-icon">
-                <circle cx="12" cy="12" r="10"/>
-                <polyline points="12 6 12 12 16 14"/>
-              </svg>
-              <span>
-                Latence : <strong>{{ task.durationMs ?? 0 }}ms</strong>
-              </span>
-            </div>
+  <hr>
 
-            <button class="btn-action start" (click)="start(task)">
-              <span>Démarrer l'intervention</span>
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-                class="arrow-icon">
-                <line x1="5" y1="12" x2="19" y2="12"/>
-                <polyline points="12 5 19 12 12 19"/>
-              </svg>
-            </button>
-          </article>
-        } @empty {
-          <div class="empty-state">
-            <p>Aucun incident en attente.</p>
-          </div>
-        }
-      </div>
-    </section>
+  <h2>
+    TERMINÉ ({{ doneTasks().length }})
+  </h2>
 
-    <section class="kanban-column progress">
-      <header class="column-header">
-        <span class="status-dot"></span>
-        <h3>EN COURS</h3>
-        <span class="badge">{{ inProgressTasks().length }}</span>
-      </header>
+  @for (task of doneTasks(); track task.id) {
 
-      <div class="task-list">
-        @for (task of inProgressTasks(); track task.id) {
-          <article class="task-card active-processing fade-in">
-            <div class="card-top">
-              <span
-                class="skill-tag"
-                [attr.data-service]="task.requiredSkill || task.serviceName || 'UNKNOWN'">
-                {{ task.serviceName || task.requiredSkill || 'UNKNOWN' }}
-              </span>
-            </div>
+    <div
+      style="
+        border:1px solid #ccc;
+        padding:15px;
+        margin:10px 0;
+        border-radius:8px;
+      "
+    >
+      <h3>{{ task.title }}</h3>
+      <p>Résolu</p>
+    </div>
 
-            <h4>{{ task.endpoint || task.title }}</h4>
+  }
 
-            @if (task.aiDiagnostic || task.description) {
-              <p class="diagnostic-preview">
-                <span class="ai-badge">AI</span>
-                {{ task.aiDiagnostic || task.description }}
-              </p>
-            }
-
-            <button class="btn-action finish" (click)="finish(task)">
-              <span>Marquer comme résolu</span>
-            </button>
-          </article>
-        } @empty {
-          <div class="empty-state">
-            <p>Aucune intervention en cours.</p>
-          </div>
-        }
-      </div>
-    </section>
-
-    <section class="kanban-column done">
-      <header class="column-header">
-        <span class="status-dot"></span>
-        <h3>TERMINÉ</h3>
-        <span class="badge">{{ doneTasks().length }}</span>
-      </header>
-
-      <div class="task-list">
-        @for (task of doneTasks(); track task.id) {
-          <article class="task-card completed-success fade-in">
-            <div class="card-top">
-              <span class="skill-tag done-tag">RÉSOLU</span>
-            </div>
-
-            <h4>{{ task.endpoint || task.title }}</h4>
-            <span class="service-sub">
-              {{ task.serviceName || 'Service Spécifié' }}
-            </span>
-            <p class="success-msg">Incident corrigé avec succès.</p>
-          </article>
-        } @empty {
-          <div class="empty-state">
-            <p>Pas encore d'incidents résolus.</p>
-          </div>
-        }
-      </div>
-    </section>
-
-  </div>
 </div>
