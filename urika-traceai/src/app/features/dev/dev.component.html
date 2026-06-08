@@ -1,0 +1,247 @@
+<div class="urika-landing">
+  <div class="urika-dev-dashboard">
+
+    <div class="dev-content-body">
+      
+      <div class="dev-header-intro">
+        <h2>Tableau Kanban Personnel</h2>
+        <p>Incidents critiques et traces distribuées automatiquement isolés et assignés à votre périmètre technique.</p>
+      </div>
+
+      @if (workflowService.loading()) {
+        <div class="loading-state">Chargement des incidents en cours...</div>
+      } @else if (workflowService.error()) {
+        <div class="error-state">{{ workflowService.error() }}</div>
+      }
+
+      <div class="kanban-board">
+        
+        <div class="kanban-column todo">
+          <div class="column-title">
+            <span>À traiter</span>
+            <span class="count-badge">List</span>
+          </div>
+          
+          <div class="column-cards">
+            @for (task of engineerTasks(); track task.id) {
+              @if (task.status === 'PENDING') {
+                <div class="task-card" [class.critical]="task.priority >= 4">
+                  <div class="task-meta">
+                    <span class="task-id">#{{ task.id }}</span>
+                    <span class="task-service">{{ task.requiredSkill }}</span>
+                  </div>
+                  <h4>{{ task.title }}</h4>
+                  
+                  <div class="ai-box">
+                    <div class="ai-tag">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="icon-xs">
+                        <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
+                        <path d="M12 16v-4"/>
+                        <path d="M12 8h.01"/>
+                      </svg>
+                      <span>Contexte Trace :</span>
+                    </div>
+                    <p>ID de Trace isolé : <code>{{ task.traceId || 'Aucune trace' }}</code></p>
+                  </div>
+
+                  <button class="btn-action primary" (click)="updateStatus(task.id, 'IN_PROGRESS')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="icon-sm">
+                      <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                    </svg>
+                    <span>Prendre en charge</span>
+                  </button>
+                </div>
+              }
+            } @empty {
+              <div class="empty-state">Aucun ticket en attente.</div>
+            }
+          </div>
+        </div>
+
+        <div class="kanban-column in-progress">
+          <div class="column-title">
+            <span>En cours de diagnostic</span>
+            <span class="count-badge active">Investigating</span>
+          </div>
+
+          <div class="column-cards">
+            @for (task of engineerTasks(); track task.id) {
+              @if (task.status === 'IN_PROGRESS') {
+                <div class="task-card ongoing">
+                  <div class="task-meta">
+                    <span class="task-id">#{{ task.id }}</span>
+                    <span class="task-service">{{ task.requiredSkill }}</span>
+                  </div>
+                  <h4>{{ task.title }}</h4>
+                  
+                  @if (task.description) {
+                    <div class="notes-preview">
+                      <div class="note-tag">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon-xs">
+                          <path d="M12 20h9"></path>
+                          <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                        </svg>
+                        <span>Description / Suivi :</span>
+                      </div>
+                      <p>{{ task.description }}</p>
+                    </div>
+                  }
+
+                  <div class="card-actions split">
+                    <button class="btn-action secondary" (click)="openNotesModal(task)">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon-sm">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                      </svg>
+                      <span>Notes</span>
+                    </button>
+                    <button class="btn-action success" (click)="updateStatus(task.id, 'COMPLETED')">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="icon-sm">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                      <span>Clôturer</span>
+                    </button>
+                  </div>
+                </div>
+              }
+            } @empty {
+              <div class="empty-state">Aucune investigation active.</div>
+            }
+          </div>
+        </div>
+
+        <div class="kanban-column done">
+          <div class="column-title">
+            <span>Résolus & Clôturés</span>
+            <span class="count-badge completed">Closed</span>
+          </div>
+
+          <div class="column-cards">
+            @for (task of engineerTasks(); track task.id) {
+              @if (task.status === 'COMPLETED') {
+                <div class="task-card completed">
+                  <div class="task-meta">
+                    <span class="task-id">#{{ task.id }}</span>
+                    <span class="task-service-done">Resolved</span>
+                  </div>
+                  <h4>{{ task.title }}</h4>
+                  @if (task.description) {
+                    <p class="final-notes"><strong>Solution appliquée :</strong> {{ task.description }}</p>
+                  }
+                  <div class="done-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="icon-xs">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                    <span>Archivé</span>
+                  </div>
+                </div>
+              }
+            } @empty {
+              <div class="empty-state">Aucun incident résolu.</div>
+            }
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    @if (selectedTaskForNotes(); as task) {
+      <div class="urika-modal-backdrop">
+        <div class="urika-modal">
+          <h3>Enregistrer les actions correctives &bull; #{{ task.id }}</h3>
+          <p class="modal-sub">Rapport d'incident destiné au suivi et au modèle d'apprentissage TraceAI.</p>
+          
+          <textarea [(ngModel)]="currentNoteText" placeholder="Ex: Augmentation de la taille de rétention du pool d'API et purge des sessions zombie..."></textarea>
+
+          <div class="modal-actions">
+            <button class="btn-secondary" (click)="selectedTaskForNotes.set(null)">Annuler</button>
+            <button class="btn-primary" (click)="saveNotes()">Sauvegarder</button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <div class="ai-assistant-wrapper" [class.open]="isChatOpen()">
+      
+      @if (!isChatOpen()) {
+        <button class="chat-trigger-btn" (click)="toggleChat()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon-sm">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          <span class="badge-pulse"></span>
+          <span>Copilote IA</span>
+        </button>
+      }
+
+      @if (isChatOpen()) {
+        <div class="chat-window">
+          
+          <div class="chat-header" (click)="toggleChat()">
+            <div class="chat-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#f26622" stroke-width="2.5" class="icon-sm">
+                <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                <polyline points="2 17 12 22 22 17"></polyline>
+                <polyline points="2 12 12 17 22 12"></polyline>
+              </svg>
+              <div>
+                <h4>TraceAI Copilot</h4>
+                <span class="status-text">En ligne • Analyse contextuelle</span>
+              </div>
+            </div>
+            <button class="btn-close-chat" (click)="toggleChat(); $event.stopPropagation()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon-sm">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+
+          <div class="chat-messages-box">
+            @for (msg of chatMessages(); track msg.text) {
+              <div class="message-wrapper" [class.user]="msg.sender === 'user'" [class.ai]="msg.sender === 'ai'">
+                <div class="message-bubble">
+                  <p>{{ msg.text }}</p>
+                </div>
+                <span class="message-time">{{ msg.timestamp }}</span>
+              </div>
+            }
+
+            @if (chatService.isLoading()) {
+              <div class="message-wrapper ai">
+                <div class="message-bubble typing-indicator">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+              </div>
+            }
+          </div>
+
+          <div class="chat-input-area">
+            <input 
+              type="text" 
+              [ngModel]="newMessage()" 
+              (ngModelChange)="newMessage.set($event)"
+              (keyup.enter)="sendChatMessage()"
+              [disabled]="chatService.isLoading()"
+              placeholder="Une question sur vos pannes (ex: Elasticsearch)...">
+            
+            <button 
+              class="btn-send-message" 
+              (click)="sendChatMessage()" 
+              [disabled]="chatService.isLoading() || !newMessage() || !newMessage().trim()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="icon-sm">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
+            </button>
+          </div>
+
+        </div>
+      }
+
+    </div>
+
+  </div>
+</div>

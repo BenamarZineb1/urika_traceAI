@@ -11,29 +11,30 @@
   --cyber-green: #10b981;
   --cyber-red: #f43f5e;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
-  --shadow-premium: 0 25px 70px -10px rgba(0, 0, 0, 0.7),
-    0 0 50px rgba(56, 189, 248, 0.03);
+  --shadow-premium: 0 25px 70px -10px rgba(0, 0, 0, 0.8),
+                    0 0 60px rgba(56, 189, 248, 0.04);
 }
 
-/* =========================
+/* ==========================================================================
    MODAL OVERLAY
-========================= */
+   ========================================================================== */
 .ai-modal-overlay {
   position: fixed;
   inset: 0;
   z-index: 9999;
-  background: rgba(2, 4, 10, 0.82);
-  backdrop-filter: blur(12px);
+  background: rgba(2, 4, 10, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 2rem;
-  animation: overlayFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: overlayFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* =========================
+/* ==========================================================================
    MODAL WINDOW
-========================= */
+   ========================================================================== */
 .ai-modal-window {
   width: 100%;
   max-width: 980px;
@@ -46,52 +47,53 @@
   max-height: 85vh;
   overflow: hidden;
   position: relative;
-  animation: modalZoomIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)
-    forwards;
-
+  animation: modalZoomIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
   will-change: transform, opacity;
 
   &::before {
     content: '';
     position: absolute;
     top: 0;
-    left: 10%;
-    right: 10%;
+    left: 8%;
+    right: 8%;
     height: 1px;
     background: linear-gradient(
       90deg,
       transparent,
       var(--cyber-blue),
+      var(--cyber-green),
       transparent
     );
-    opacity: 0.6;
+    opacity: 0.8;
   }
 }
 
-/* =========================
+/* ==========================================================================
    HEADER
-========================= */
+   ========================================================================== */
 .ai-modal-header {
   padding: 1.5rem 2.5rem;
   border-bottom: 1px solid var(--border-color);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(255, 255, 255, 0.01);
+  background: rgba(10, 17, 36, 0.4);
 
   .ai-badge-container {
     display: flex;
     align-items: center;
-    gap: 8px;
-    background: rgba(56, 189, 248, 0.05);
+    gap: 10px;
+    background: rgba(56, 189, 248, 0.06);
     padding: 6px 16px;
     border-radius: 100px;
-    border: 1px solid rgba(56, 189, 248, 0.2);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    filter: drop-shadow(0 0 4px rgba(56, 189, 248, 0.1));
 
     .sparkle-icon {
       width: 14px;
       height: 14px;
       color: var(--cyber-blue);
+      filter: drop-shadow(0 0 2px var(--cyber-blue));
     }
 
     .ai-badge-text {
@@ -99,7 +101,7 @@
       font-weight: 700;
       color: var(--cyber-blue);
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 1.2px;
     }
   }
 
@@ -108,26 +110,29 @@
     border: none;
     color: var(--text-muted);
     cursor: pointer;
-    padding: 6px;
+    padding: 8px;
     border-radius: 50%;
-    transition: all 0.2s ease;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-    svg {
+    .icon-close {
       width: 20px;
       height: 20px;
     }
 
     &:hover {
       background: rgba(255, 255, 255, 0.05);
-      color: var(--text-primary);
+      color: var(--cyber-red);
       transform: rotate(90deg);
     }
   }
 }
 
-/* =========================
-   BODY
-========================= */
+/* ==========================================================================
+   BODY & WORKSPACE
+   ========================================================================== */
 .ai-modal-body {
   padding: 2.5rem;
   overflow-y: auto;
@@ -136,9 +141,9 @@
   gap: 2rem;
 }
 
-/* =========================
-   CONTEXT BAR
-========================= */
+/* ==========================================================================
+   CONTEXT BAR (Indicateurs d'incidents)
+   ========================================================================== */
 .incident-context-bar {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -158,6 +163,7 @@
       font-weight: 700;
       color: var(--text-muted);
       text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .metric-value {
@@ -168,10 +174,12 @@
       &.mono-text {
         font-family: var(--font-mono);
         color: var(--text-secondary);
+        letter-spacing: -0.5px;
       }
 
       &.service-highlight {
         color: var(--cyber-blue);
+        text-shadow: 0 0 12px rgba(56, 189, 248, 0.15);
       }
     }
 
@@ -179,9 +187,11 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      background: rgba(255, 255, 255, 0.01);
       padding: 4px 12px;
       border-radius: 8px;
       width: max-content;
+      border: 1px solid var(--border-color);
     }
 
     .status-pill-indicator {
@@ -191,86 +201,95 @@
 
       &.ok-mode {
         background: var(--cyber-green);
-        box-shadow: 0 0 8px var(--cyber-green);
+        box-shadow: 0 0 10px var(--cyber-green), 0 0 4px var(--cyber-green);
       }
 
       &.slow-mode {
         background: #f59e0b;
-        box-shadow: 0 0 8px #f59e0b;
+        box-shadow: 0 0 10px #f59e0b, 0 0 4px #f59e0b;
       }
 
       &.error-mode {
         background: var(--cyber-red);
-        box-shadow: 0 0 8px var(--cyber-red);
+        box-shadow: 0 0 10px var(--cyber-red), 0 0 4px var(--cyber-red);
       }
     }
   }
 }
 
-/* =========================
-   GRID
-========================= */
+/* ==========================================================================
+   GRID & CARDS
+   ========================================================================== */
 .analysis-dashboard-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 2rem;
 }
 
-/* =========================
-   CARDS
-========================= */
 .analysis-card {
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
   border-radius: 18px;
-  padding: 1.75rem;
+  padding: 2rem;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-  transition: border-color 0.3s ease;
-
-  will-change: transform;
+  gap: 1.5rem;
+  transition: all 0.30s cubic-bezier(0.4, 0, 0.2, 1);
 
   &:hover {
-    border-color: rgba(255, 255, 255, 0.12);
+    border-color: rgba(56, 189, 248, 0.2);
+    box-shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.5);
+    transform: translateY(-2px);
   }
 
   .card-header-block {
     display: flex;
     align-items: center;
-    gap: 12px;
 
     .card-title {
-      font-size: 1.05rem;
+      font-size: 1.1rem;
       font-weight: 700;
       color: var(--text-primary);
       margin: 0;
+      position: relative;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -6px;
+        left: 0;
+        width: 18px;
+        height: 2px;
+        background: var(--cyber-blue);
+        border-radius: 4px;
+      }
     }
   }
 
   .card-body-content {
     display: flex;
     flex-direction: column;
+    height: 100%;
     min-height: 0;
 
     p {
-      font-size: 0.9rem;
-      line-height: 1.6;
+      font-size: 0.92rem;
+      line-height: 1.65;
       color: var(--text-secondary);
-      margin: 0 0 1.5rem 0;
+      margin: 0 0 1.75rem 0;
     }
   }
 }
 
-/* =========================
-   ACTION PANEL
-========================= */
+/* ==========================================================================
+   ACTION PANEL (Orchestrateur & Assignation)
+   ========================================================================== */
 .orchestration-action-panel {
   background: var(--bg-surface-elevated);
   border: 1px solid var(--border-color);
   border-radius: 14px;
-  padding: 1.25rem;
-  margin-top: auto;
+  padding: 1.25rem 1.5rem;
+  margin-top: auto; 
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
@@ -278,10 +297,20 @@
   .routing-details {
     display: flex;
     flex-direction: column;
+    gap: 4px;
+
+    .metric-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
 
     .routing-team {
       color: var(--cyber-green);
       font-weight: 700;
+      font-size: 1.05rem;
+      text-shadow: 0 0 10px rgba(16, 185, 129, 0.15);
     }
   }
 
@@ -290,76 +319,185 @@
     background: var(--text-primary);
     color: var(--bg-main);
     border: none;
-    padding: 12px 20px;
+    padding: 14px 20px;
     border-radius: 10px;
     font-weight: 700;
+    font-size: 0.9rem;
     cursor: pointer;
     transition: all 0.2s ease;
 
     &:hover {
-      background: #fff;
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+      background: #ffffff;
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.18);
+      transform: scale(1.01);
+    }
+    
+    &:active {
+      transform: scale(0.99);
     }
   }
 }
 
-/* =========================
-   FOOTER
-========================= */
+/* ==========================================================================
+   FOOTER (Jauge de confiance IA)
+   ========================================================================== */
 .ai-modal-footer {
   border-top: 1px solid var(--border-color);
   padding-top: 1.5rem;
+
+  .footer-confidence-metric {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .metric-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
 
   .confidence-value {
     color: var(--cyber-blue);
     font-weight: 700;
   }
 
+  .confidence-bar-track {
+    background: rgba(255, 255, 255, 0.03);
+    height: 6px;
+    border-radius: 10px;
+    overflow: hidden;
+    width: 100%;
+  }
+
   .progress-bar-fill {
     height: 100%;
-    background: linear-gradient(
-      90deg,
-      var(--cyber-blue),
-      var(--cyber-green)
-    );
+    background: linear-gradient(90deg, var(--cyber-blue), var(--cyber-green));
     border-radius: 10px;
-
     transform: scaleX(0);
     transform-origin: left;
-    animation: fillProgress 1s ease forwards;
-
+    animation: fillProgress 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     will-change: transform;
   }
 }
 
-/* =========================
-   LOADING
-========================= */
+/* ==========================================================================
+   LOADING CONTAINER & CYBER AI LOGO ANIMATION
+   ========================================================================== */
 .premium-loading-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 5rem 0;
-  gap: 2rem;
+  padding: 6rem 0;
+  gap: 2.25rem;
+  color: var(--text-secondary);
+
+  /* Avatar Avatar Cyber IA (Conteneur) */
+  .cyber-ai-avatar-wrapper {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    background: rgba(56, 189, 248, 0.03);
+    border: 1px solid rgba(56, 189, 248, 0.15);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: 0 0 30px rgba(56, 189, 248, 0.05);
+    animation: floatingAvatar 4s ease-in-out infinite;
+
+    /* Icône SVG interne */
+    .cyber-ai-icon {
+      width: 42px;
+      height: 42px;
+      color: var(--cyber-blue);
+      filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.6));
+      animation: aiBreathe 2s ease-in-out infinite;
+      z-index: 2;
+    }
+
+    /* Ligne Laser Descendante */
+    .scanner-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyber-blue), transparent);
+      box-shadow: 0 0 8px var(--cyber-blue);
+      z-index: 3;
+      animation: scanBar 2s ease-in-out infinite;
+    }
+
+    /* Onde de choc pulsée circulaire */
+    .glow-pulse-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 20px;
+      border: 2px solid var(--cyber-blue);
+      opacity: 0;
+      z-index: 1;
+      animation: ringPulse 2s cubic-bezier(0.24, 0, 0.3, 1) infinite;
+    }
+  }
+
+  /* Blocs textuels de chargement */
+  .loading-text-block {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .loading-message {
+      margin: 0;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .estimated-time {
+      color: var(--cyber-blue);
+      letter-spacing: 0.5px;
+    }
+  }
+
+  /* Barre de progression globale */
+  .progress-bar-track {
+    background: rgba(255, 255, 255, 0.03);
+    height: 4px;
+    border-radius: 10px;
+    overflow: hidden;
+    width: 240px;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--cyber-blue), #818cf8);
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+    animation: progressFill 5s linear forwards;
+    width: 0%; 
+  }
+
+  .error-message {
+    color: var(--cyber-red);
+    font-family: var(--font-mono);
+  }
 }
 
-/* =========================
-   ANIMATIONS
-========================= */
+/* ==========================================================================
+   ANIMATIONS DEFINITIONS
+   ========================================================================== */
 @keyframes overlayFadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes modalZoomIn {
   from {
     opacity: 0;
-    transform: scale(0.96) translateY(10px);
+    transform: scale(0.97) translateY(15px);
   }
   to {
     opacity: 1;
@@ -368,28 +506,60 @@
 }
 
 @keyframes fillProgress {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
 }
 
-/* =========================
-   RESPONSIVE
-========================= */
+/* Nouvelles Animations Cyber Logo */
+@keyframes floatingAvatar {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes aiBreathe {
+  0%, 100% { opacity: 0.7; filter: drop-shadow(0 0 4px rgba(56,189,248,0.4)); }
+  50% { opacity: 1; filter: drop-shadow(0 0 14px rgba(56,189,248,0.8)); }
+}
+
+@keyframes scanBar {
+  0% { top: 0%; opacity: 0; }
+  10%, 90% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+@keyframes ringPulse {
+  0% { transform: scale(0.8); opacity: 0.5; }
+  100% { transform: scale(1.3); opacity: 0; }
+}
+
+/* Progression temporelle autonome */
+@keyframes progressFill {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN
+   ========================================================================== */
 @media (max-width: 850px) {
+  .ai-modal-body {
+    padding: 1.5rem;
+    gap: 1.5rem;
+  }
+
   .analysis-dashboard-grid {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 
   .incident-context-bar {
     grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 1.25rem;
   }
 
   .ai-modal-window {
-    max-height: 92vh;
-    margin: 1rem;
+    max-height: 90vh;
+    margin: 0.5rem;
   }
 }

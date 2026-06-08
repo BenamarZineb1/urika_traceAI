@@ -1,0 +1,148 @@
+<div class="explorer-wrapper fade-in">
+  
+  <header class="view-header">
+    <div class="header-title-block">
+      <span class="section-label">URIKA INTELLIGENCE LAYER</span>
+      <h1>AI Insights & Dispatching Automatisé</h1>
+      <p class="subtitle">Analyse automatique des traces de l'architecture, identification des compétences requises et routage intelligent vers l'ingénieur idéal.</p>
+    </div>
+
+    <div class="ai-stats-summary">
+      <div class="stat-bubble">
+        <span class="lbl">Fiabilité du Diagnostic</span>
+        <span class="val accent-color">{{ avgConfidence() }}%</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="filter-tab-bar">
+    <button [class.active]="selectedCategory() === 'ALL'" (click)="setFilter('ALL')">
+      Toutes les alertes ({{ insights().length }})
+    </button>    
+    <button [class.active]="selectedCategory() === 'PERFORMANCE'" (click)="setFilter('PERFORMANCE')">Performance</button>
+    <button [class.active]="selectedCategory() === 'SECURITY'" (click)="setFilter('SECURITY')">Sécurité</button>
+  </div>
+
+  <div class="insights-grid">
+    @for (insight of filteredInsights(); track insight.id) {
+      <div class="insight-card" [attr.data-category]="insight.category" (click)="openCopilot(insight)">
+        
+        <div class="card-header">
+          <div class="category-info">
+            <span class="category-badge">{{ insight.category }}</span>
+            <span class="timestamp">{{ insight.timestamp }}</span>
+          </div>
+          
+          <div class="confidence-badge" [class.high]="insight.confidenceScore >= 85">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="ai-spark">
+              <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+            </svg>
+            <span>Confiance IA : {{ insight.confidenceScore }}%</span>
+          </div>
+        </div>
+
+        <h3 class="insight-title">{{ insight.title }}</h3>
+        
+        <div class="insight-target">
+          <span class="lbl">Service :</span>
+          <span class="val">#{{ insight.targetService }}</span>
+          <span class="insight-id" style="color: #38bdf8; font-family: monospace; background: rgba(56, 189, 248, 0.1); padding: 3px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600;">
+            ID Trace : {{ insight.linkedTraceId }}
+          </span>
+        </div>
+
+        <p class="insight-summary">{{ insight.summary }}</p>
+
+        <div class="remediation-box" style="border-color: rgba(56, 189, 248, 0.2); background: rgba(56, 189, 248, 0.01);">
+          <div class="box-title" style="color: #38bdf8;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="box-icon">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            <span>Matrice de Compétences Requises</span>
+          </div>
+          <p class="box-text" style="margin-bottom: 6px; color: var(--text-secondary);">
+            <strong>Expertise ciblée :</strong> <span style="color: #f8fafc;">{{ insight.requiredSkill }}</span>
+          </p>
+          <p class="box-text" style="color: var(--text-muted); margin: 0;">
+            <strong>Assignation actuelle :</strong> <span style="color: #10b981; font-weight: 700;">{{ insight.assignedTo }}</span>
+          </p>
+        </div>
+
+        <div class="card-action-overlay">
+          <span>Ouvrir l'assistant d'assignation intelligent</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px; height:16px;"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+
+      </div>
+    } @empty {
+      <div class="empty-insights-state">
+        <p>Aucune anomalie corrélée dans les logs de traces actuels.</p>
+      </div>
+    }
+  </div>
+
+  <aside class="copilot-drawer" [class.open]="isDrawerOpen">
+    <div class="drawer-header">
+      <div class="drawer-title-block">
+        <div class="cyber-badge-mini">URIKA SMART DISPATCH</div>
+        <h2>Orchestration RH</h2>
+      </div>
+      <button class="btn-close-drawer" (click)="closeCopilot()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+
+    <div class="drawer-context-banner" *ngIf="activeInsight">
+      <span class="context-label">ANALYSE DU CONTEXTE : {{ activeInsight.linkedTraceId }}</span>
+      <p class="context-title">{{ activeInsight.title }}</p>
+    </div>
+
+    <div class="chat-messages-area" #scrollContainer>
+      
+      <div *ngIf="chatLoading" class="chat-init-loader">
+        <div class="cyber-ai-avatar-wrapper-mini">
+          <div class="scanner-line"></div>
+          <div class="glow-pulse-ring"></div>
+        </div>
+        <p>Recherche des profils qualifiés dans le registre d'équipe...</p>
+      </div>
+
+      <div *ngFor="let msg of chatMessages" class="message-wrapper" [class.user-msg]="msg.isUser">
+        <div class="message-bubble">
+          <p>{{ msg.text }}</p>
+        </div>
+        <span class="message-time">{{ msg.time }}</span>
+      </div>
+
+    </div>
+
+    <div class="drawer-quick-actions" *ngIf="!chatLoading">
+      <span class="section-micro-title">Flux de Dispatching de Tâches</span>
+      <div class="actions-buttons-row" style="grid-template-columns: 1fr;">
+        <button class="btn-cyber-action run-action" (click)="executeTrigger('assignation')">
+          <span>Créer le Ticket & Assigner l'expert idéal</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="drawer-input-footer" *ngIf="!chatLoading">
+      <div class="input-wrapper">
+        <input 
+          type="text" 
+          placeholder="Demandez la charge d'un autre ingénieur ou changez le skill..." 
+          [(ngModel)]="userMessageText"
+          (keyup.enter)="sendMessage()"
+        />
+        <button class="btn-send-message" (click)="sendMessage()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="drawer-backdrop" *ngIf="isDrawerOpen" (click)="closeCopilot()"></div>
+
+</div>

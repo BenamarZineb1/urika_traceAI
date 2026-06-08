@@ -1,0 +1,194 @@
+<div class="urika-landing">
+  
+  <header class="landing-navbar" role="banner">
+    <div class="urika-logo-mock" aria-label="Urika Cloud Accueil" tabindex="0">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#f26622" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="logo-svg">
+        <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+      </svg>
+      <div class="logo-text">
+        <span class="urika">URIKA</span><span class="cloud">CLOUD</span>
+      </div>
+    </div>
+    
+    <nav class="landing-nav-links" role="navigation">
+      <a href="#platform" class="nav-item">Expertises</a>
+      <a href="#solutions" class="nav-item">Outsourcing</a>
+      <a href="#formations" class="nav-item">Formations</a>
+    </nav>
+
+    <div class="landing-nav-actions">
+      <button class="btn-secondary" (click)="navigateToLogin()" aria-label="Se connecter">Sign In</button>
+      <button class="btn-primary" (click)="openDemoModal()" aria-label="Demander une étude de projet">Request Demo &rarr;</button>
+    </div>
+  </header>
+
+  <main role="main">
+    <section class="landing-hero">
+      <div class="hero-container">
+        
+        <div class="hero-content">
+          <div class="announcement-badge fade-in-up">
+            <span class="pulse"></span> PFE 2026 | Agence Digitale & Intelligence Artificielle
+          </div>
+          
+          <h1 class="fade-in-up delay-1">
+            Stratégies digitales simplifiées, <br>
+            <span class="gradient-text">performances décuplées</span>
+          </h1>
+          
+          <p class="hero-subtitle fade-in-up delay-2">
+            Ingénierie informatique et technologies intelligentes. Urika Cloud accompagne la transformation de votre entreprise à travers le développement sur mesure, des architectures sécurisées et une infogérance de pointe.
+          </p>
+          
+          <div class="hero-actions fade-in-up delay-3">
+            <button class="btn-primary btn-large" (click)="navigateToLogin()">Lancer mon projet</button>
+            <button class="btn-secondary btn-large" (click)="openDemoModal()">Étudier mes besoins</button>
+          </div>
+        </div>
+
+        <div class="hero-visual-mockup float-animation">
+          <div class="mockup-window">
+            <div class="mockup-header">
+              <div class="mac-dots">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+              </div>
+              <span class="mockup-title">urika-process-optimizer.log <span class="cursor-blink">_</span></span>
+            </div>
+            
+            <div class="mockup-body code-reveal-container">
+              <div class="code-line green type-line-1">[INFO] Core automation engine initialized</div>
+              <div class="code-line code-flex type-line-2">
+                <span class="red-text">[WARN]</span> Legacy workflow bottleneck detected in operation lines
+              </div>
+              <div class="code-line yellow type-line-3">[DIAGNOSTIC] Automation potential: Data ingestion (94% efficiency gain)</div>
+              <div class="code-line blue type-line-4">[ROUTING] Restructuring architecture model &bull; Assigned to Reda</div>
+              
+              <div class="mockup-chart-sim fade-in-chart">
+                <div class="bar" style="height: 40%"></div>
+                <div class="bar" style="height: 55%"></div>
+                <div class="bar alert pulse-alert" style="height: 95%"></div>
+                <div class="bar" style="height: 30%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="platform" class="landing-features-grid">
+      @for (f of features; track f.title) {
+        <article class="feature-card">
+          <div class="feat-icon-wrapper">
+            <div class="svg-host" [innerHTML]="f.iconSvg"></div>
+          </div>
+          <h3>{{ f.title }}</h3>
+          <p>{{ f.desc }}</p>
+          
+          <div class="card-footer-link">
+            <span>Découvrir l'expertise</span>
+            <span class="arrow">&rarr;</span>
+          </div>
+        </article>
+      }
+    </section>
+  </main>
+
+  @defer (when isDemoModalOpen()) {
+    @if (isDemoModalOpen()) {
+      <div class="urika-demo-page-overlay" role="dialog" aria-modal="true" aria-labelledby="demo-title">
+        <div class="urika-demo-container">
+          
+          <button class="btn-close-page" (click)="closeDemoModal()" aria-label="Fermer la page">&times; FERMER</button>
+
+          <div class="demo-grid">
+            
+            <div class="demo-info-side">
+              <div class="brand-tag">URIKA CLOUD SERVICES</div>
+              <h2 id="demo-title">À quoi devez-vous vous attendre ?</h2>
+              
+              <ul class="benefit-list">
+                <li>
+                  <div class="bullet-icon" aria-hidden="true">✓</div>
+                  <div>
+                    <strong>Évaluation de votre écosystème</strong>
+                    <p>Analyse de viabilité et d'intégration de modules ';intelligents au sein de vos infrastructures existantes.</p>
+                  </div>
+                </li>
+                <li>
+                  <div class="bullet-icon" aria-hidden="true">✓</div>
+                  <div>
+                    <strong>Optimisation budgétaire & ROI</strong>
+                    <p>Découvrez comment l'infogérance agile et l'automatisation des processus réduisent vos coûts opérationnels.</p>
+                  </div>
+                </li>
+                <li>
+                  <div class="bullet-icon" aria-hidden="true">✓</div>
+                  <div>
+                    <strong>Échanges directs avec nos ingénieurs</strong>
+                    <p>Discutez de vos besoins techniques spécifiques (développement sur mesure, audits Fortinet, stratégies web).</p>
+                  </div>
+                </li>
+              </ul>
+
+              <div class="demo-footer-note">
+                Partenaire de votre transformation digitale technologique en 2026.
+              </div>
+            </div>
+
+            <div class="demo-form-side">
+              <div class="form-card">
+                <h3>Planifier mon étude de projet</h3>
+                
+                <form (submit)="$event.preventDefault(); submitDemoRequest()">
+                  
+                  <div class="form-section">
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label for="firstName">Prénom</label>
+                        <input type="text" id="firstName" [(ngModel)]="demoForm.firstName" name="firstName" placeholder="Reda" required autocomplete="given-name" />
+                      </div>
+                      <div class="form-group">
+                        <label for="lastName">Nom</label>
+                        <input type="text" id="lastName" [(ngModel)]="demoForm.lastName" name="lastName" placeholder="Admin" required autocomplete="family-name" />
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="email">Adresse email professionnelle</label>
+                      <input type="email" id="email" [(ngModel)]="demoForm.email" name="email" placeholder="reda@company.com" required autocomplete="email" />
+                    </div>
+                  </div>
+
+                  <div class="form-section">
+                    <div class="form-group">
+                      <label for="company">Nom de l'entreprise</label>
+                      <input type="text" id="company" [(ngModel)]="demoForm.company" name="company" placeholder="Urika Tech" required autocomplete="organization" />
+                    </div>
+
+                    <div class="form-group">
+                      <label for="phone">Numéro de téléphone</label>
+                      <input type="tel" id="phone" [(ngModel)]="demoForm.phone" name="phone" placeholder="+212 600-000000" required autocomplete="tel" />
+                    </div>
+                  </div>
+
+                  <p class="privacy-notice">
+                    En soumettant ce formulaire, vous acceptez qu'un conseiller technique d'Urika Cloud prenne contact avec vous pour analyser vos besoins.
+                  </p>
+
+                  <button type="submit" class="btn-primary btn-submit-demo" [disabled]="!isFormValid()">
+                    Demander mon étude de projet &rarr;
+                  </button>
+
+                </form>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    }
+  }
+</div>

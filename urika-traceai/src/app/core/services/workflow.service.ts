@@ -63,7 +63,7 @@ export class WorkflowService {
       .get<Task[]>(this.apiUrl)
       .subscribe({
         next: (data) => {
-          this.tasks.set(data);
+          this.tasks.set(data || []);
           this.loading.set(false);
         },
         error: (err) => {
@@ -85,36 +85,57 @@ export class WorkflowService {
       .pipe(
         tap((newTask: Task) => {
           // ✅ OPTIMISATION : Ajout local et immédiat dans le Signal
-          // Évite une requête HTTP GET superflue et règle les problèmes de latence BDD
           this.tasks.update((currentTasks) => [...currentTasks, newTask]);
         })
       );
   }
 
   /**
-   * Mise à jour du statut avec modification locale du Signal
+   * Mise à jour du statut adaptée aux contraintes métiers du Backend
+   * 🛠️ CORRECTION : Appelle /api/tasks/{id}/complete uniquement pour le statut COMPLETED
    */
   public updateTaskStatus(
     taskId: number,
     status: TaskStatus
   ): void {
+    this.error.set(null);
+
+    // 1. Si l'action n'est pas "COMPLETED", le backend n'a pas de route associée.
+    // On effectue une transition purement locale pour l'IHM (ex: déplacement dans IN_PROGRESS).
+    if (status !== 'COMPLETED') {
+      console.log(`[WorkflowService] Transition locale vers ${status} (Pas de route serveur requise)`);
+      this.tasks.update((currentTasks) =>
+        currentTasks.map((t) =>
+          t.id === taskId ? { ...t, status } : t
+        )
+      );
+      return;
+    }
+
+    // 2. Si le statut visé est COMPLETED, on déclenche l'appel sur la seule route valide du backend.
+    // Note : On passe un objet vide {} car la méthode Java @PutMapping("/{id}/complete") n'attend pas de Body.
     this.http
       .put<Task>(
-        `${this.apiUrl}/${taskId}/status`,
-        { status }
+        `${this.apiUrl}/${taskId}/complete`,
+        {}
       )
       .subscribe({
-        next: (updatedTask: Task) => {
-          // ✅ OPTIMISATION : Mise à jour chirurgicale de la tâche dans le Signal
+        next: (updatedTaskFromServer: Task) => {
+          console.log(`[WorkflowService] Succès ! Tâche #${taskId} marquée comme complétée côté serveur.`);
+          
+          // ✅ OPTIMISATION : Remplacement chirurgical des données avec le retour officiel du serveur
           this.tasks.update((currentTasks) =>
             currentTasks.map((t) =>
-              t.id === taskId ? { ...t, ...updatedTask, status } : t
+              t.id === taskId ? { ...t, ...updatedTaskFromServer } : t
             )
           );
         },
         error: (err) => {
-          console.error('Erreur update status', err);
-          this.error.set('Erreur lors de la mise à jour du statut');
+          console.error(`Erreur lors du traitement HTTP PUT sur /api/tasks/${taskId}/complete`, err);
+          this.error.set('Impossible de clore cette tâche sur le serveur');
+          
+          // Sécurité anti-désynchronisation : On réaligne l'UI sur la base de données
+          this.loadTasks();
         }
       });
   }

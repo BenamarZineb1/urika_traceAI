@@ -2,173 +2,138 @@
 
   <header class="view-header">
     <div class="header-title-block">
+      <span class="section-label">TRACEAI OBSERVABILITY</span>
       <h1>Explorateur de Traces</h1>
-      <p class="subtitle">
-        Analyse en temps réel et visualisation des flux de données Elasticsearch
-      </p>
+      <p class="subtitle">Analyse temps réel des requêtes distribuées et détection des incidents</p>
     </div>
 
-    <button
-      class="btn-sync"
-      (click)="traceService.loadTraces()">
-
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2.5"
-        class="icon-sync">
-
-        <path
-          d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+    <button class="btn-sync" (click)="refresh()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="icon-sync">
+        <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
       </svg>
-
       <span>Synchroniser</span>
     </button>
   </header>
 
+  <div class="stream-banner">
+    <span class="stream-dot"></span>
+    <span>Live Trace Stream</span>
+  </div>
+
+  <section class="trace-metrics">
+    <div class="metric-box">
+      <span class="metric-value">{{ totalTraces() }}</span>
+      <span class="metric-label">Traces Collectées</span>
+    </div>
+    <div class="metric-box critical">
+      <span class="metric-value">{{ errorCount() }}</span>
+      <span class="metric-label">Incidents Critiques</span>
+    </div>
+    <div class="metric-box warning">
+      <span class="metric-value">{{ slowCount() }}</span>
+      <span class="metric-label">Requêtes Lentes</span>
+    </div>
+    <div class="metric-box success">
+      <span class="metric-value">{{ healthyCount() }}</span>
+      <span class="metric-label">Healthy</span>
+    </div>
+  </section>
+
   <div class="data-card">
-
     <div class="table-responsive">
-
       <table class="u-table">
-
+        <colgroup>
+          <col style="width: 18%;">
+          <col style="width: 20%;">
+          <col style="width: 22%;">
+          <col style="width: 14%;">
+          <col style="width: 11%;">
+          <col style="width: 15%;">
+        </colgroup>
         <thead>
           <tr>
-            <th>Service Source</th>
-            <th>Endpoint API</th>
-            <th>Durée / Latence</th>
+            <th>Service</th>
+            <th>Endpoint</th>
+            <th>Latence</th>
             <th>Statut</th>
-            <th class="actions">Analyse Avancée</th>
+            <th>Priorité</th>
+            <th class="text-center">IA</th>
           </tr>
         </thead>
-
         <tbody>
-
-          @for (
-            trace of traceService.traces();
-            track trace.trace_id
-          ) {
-
+          @for (trace of traceService.traces(); track trace.trace_id) {
             <tr class="row-entry">
-
+              
               <td>
-                <span class="tag-service">
-                  {{ trace.service || 'UNKNOWN' }}
-                </span>
-              </td>
-
-              <td>
-                <code class="code-url">
-                  {{ trace.endpoint || 'N/A' }}
-                </code>
-              </td>
-
-              <td>
-
-                <div class="perf-indicator">
-
-                  <span class="ms-val">
-                    {{ trace.duration_ms }}
-                    <span class="unit-ms">
-                      ms
-                    </span>
-                  </span>
-
-                  <div class="gauge">
-
-                    <div
-                      class="gauge-fill"
-                      [style.width.%]="(trace.duration_ms / 5000) * 100"
-                      [class.ok]="trace.status === 'ok'"
-                      [class.slow]="trace.status === 'slow'"
-                      [class.error]="trace.status === 'error'">
-
-                    </div>
-
-                  </div>
-
-                </div>
-
-              </td>
-
-              <td>
-
-                <span
-                  class="status-badge"
-                  [class.ok]="trace.status === 'ok'"
-                  [class.slow]="trace.status === 'slow'"
-                  [class.error]="trace.status === 'error'">
-
-                  <span class="status-dot"></span>
-
-                  <span class="status-text">
-                    {{ trace.status }}
-                  </span>
-
-                </span>
-
-              </td>
-
-              <td class="actions">
-
-                <button
-                  class="btn-ai"
-                  (click)="analyze(trace.trace_id)">
-
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    class="icon-ai">
-
-                    <path
-                      d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                <span class="tag-service" [title]="trace.service || 'UNKNOWN'">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="service-icon">
+                    <rect x="3" y="3" width="7" height="7"/>
+                    <rect x="14" y="3" width="7" height="7"/>
+                    <rect x="14" y="14" width="7" height="7"/>
+                    <rect x="3" y="14" width="7" height="7"/>
                   </svg>
-
-                  <span>
-                    Diagnostic IA
-                  </span>
-
-                </button>
-
+                  <span class="service-name">{{ trace.service || 'UNKNOWN' }}</span>
+                </span>
               </td>
 
-            </tr>
+              <td>
+                <code class="code-url" [title]="trace.endpoint || 'N/A'">{{ trace.endpoint || 'N/A' }}</code>
+              </td>
 
-          } @empty {
-
-            <tr>
-              <td colspan="5" class="empty-state">
-
-                <div class="empty-content">
-                  <p>
-                    Aucune trace disponible.
-                  </p>
+              <td>
+                <div class="perf-indicator">
+                  <span class="ms-val">{{ trace.duration_ms }}<span class="unit-ms">ms</span></span>
+                  <div class="gauge">
+                    <div class="gauge-fill"
+                         [style.width.%]="trace.duration_ms > 3000 ? 100 : (trace.duration_ms / 3000) * 100"
+                         [ngClass]="trace.status">
+                    </div>
+                  </div>
                 </div>
+              </td>
 
+              <td>
+                <span class="status-badge" [ngClass]="trace.status">
+                  <span class="status-dot"></span>
+                  <span class="status-text">
+                    {{ trace.status === 'ok' ? 'HEALTHY' : trace.status === 'slow' ? 'WARNING' : 'CRITICAL' }}
+                  </span>
+                </span>
+              </td>
+
+              <td>
+                <span class="severity" [ngClass]="trace.status">
+                  {{ trace.status === 'ok' ? 'LOW' : trace.status === 'slow' ? 'MEDIUM' : 'CRITICAL' }}
+                </span>
+              </td>
+
+              <td class="text-center">
+                <button type="button" class="btn-premium-action btn-ai" (click)="analyze(trace)">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon-ai">
+                    <path d="M12 3L4 7v6c0 5 3.5 7.5 8 8 4.5-.5 8-3 8-8V7l-8-4z"/>
+                    <circle cx="12" cy="11" r="2"/>
+                    <path d="M12 13v3"/>
+                  </svg>
+                  <span>Root Cause Analysis</span>
+                </button>
+              </td>
+
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="empty-state">
+                <div class="empty-content">
+                  <p>Aucune trace distribuée détectée sur le cluster.</p>
+                </div>
               </td>
             </tr>
-
           }
-
         </tbody>
-
       </table>
-
     </div>
-
   </div>
 
   @if (uiService.selectedTrace(); as selectedTrace) {
-
-    <app-ai-panel
-      [trace]="selectedTrace"
-      (close)="uiService.closeAnalysis()">
-
-    </app-ai-panel>
-
+    <app-ai-panel [trace]="selectedTrace" (close)="uiService.closeAnalysis()"></app-ai-panel>
   }
-
 </div>

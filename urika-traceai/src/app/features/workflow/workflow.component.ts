@@ -11,68 +11,58 @@ import { Task } from '../../core/models/task.model';
   styleUrls: ['./workflow.component.scss']
 })
 export class WorkflowComponent implements OnInit {
-
-  protected readonly workflowService = inject(WorkflowService);
-
-  /**
-   * Tâches en attente
-   */
-  readonly todoTasks = computed(() =>
-    this.workflowService.tasks().filter(
-      (t: Task) => t.status === 'PENDING'
-    )
-  );
+  public readonly workflowService = inject(WorkflowService);
 
   /**
-   * Tâches en cours
+   * Tâches en attente (Filtrées dynamiquement via Signal)
    */
-  readonly inProgressTasks = computed(() =>
-    this.workflowService.tasks().filter(
-      (t: Task) => t.status === 'IN_PROGRESS'
-    )
-  );
+  readonly todoTasks = computed(() => {
+    const allTasks = this.workflowService.tasks() || [];
+    return allTasks.filter((t: Task) => t.status === 'PENDING');
+  });
 
   /**
-   * Tâches terminées
+   * Tâches en cours de traitement (Filtrées dynamiquement via Signal)
    */
-  readonly doneTasks = computed(() =>
-    this.workflowService.tasks().filter(
-      (t: Task) => t.status === 'COMPLETED'
-    )
-  );
+  readonly inProgressTasks = computed(() => {
+    const allTasks = this.workflowService.tasks() || [];
+    return allTasks.filter((t: Task) => t.status === 'IN_PROGRESS');
+  });
+
+  /**
+   * Tâches résolues et clôturées (Filtrées dynamiquement via Signal)
+   */
+  readonly doneTasks = computed(() => {
+    const allTasks = this.workflowService.tasks() || [];
+    return allTasks.filter((t: Task) => t.status === 'COMPLETED');
+  });
 
   ngOnInit(): void {
     this.workflowService.loadTasks();
-
-    // Debug
-    setTimeout(() => {
-      console.log('TASKS CHARGÉES :', this.workflowService.tasks());
-    }, 1000);
   }
 
+  /**
+   * Force le rafraîchissement des données depuis le backend
+   */
   refresh(): void {
     this.workflowService.loadTasks();
   }
 
+  /**
+   * ✅ AJOUT : Passe une tâche à l'état IN_PROGRESS
+   * Déclenche la transition locale instantanée pour l'IHM
+   */
   start(task: Task): void {
-    if (!task.id) {
-      return;
-    }
-
-    this.workflowService.updateTaskStatus(
-      task.id,
-      'IN_PROGRESS'
-    );
+    if (!task.id) return;
+    this.workflowService.updateTaskStatus(task.id, 'IN_PROGRESS');
   }
 
+  /**
+   * Passe une tâche à l'état COMPLETED
+   * Déclenche l'appel HTTP officiel sur la route unique de ton Spring Boot
+   */
   finish(task: Task): void {
-    if (!task.id) {
-      return;
-    }
-
-    this.workflowService.updateTaskStatus(
-      task.id,
-      'COMPLETED'
-    );
+    if (!task.id) return;
+    this.workflowService.updateTaskStatus(task.id, 'COMPLETED');
   }
 }

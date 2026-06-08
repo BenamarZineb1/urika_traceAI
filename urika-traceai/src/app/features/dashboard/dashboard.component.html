@@ -1,16 +1,16 @@
-<div class="dashboard-wrapper fade-in">
-
-  <header class="view-header">
+<div class="dashboard-wrapper"> <header class="view-header">
     <div class="header-title-block">
+      <span class="product-label">
+        URIKA CLOUD • TRACEAI PLATFORM
+      </span>
       <h1>Analyse du Cluster</h1>
       <p class="subtitle">
-        Télémétrie distribuée et état de santé des microservices
+        Observabilité distribuée et diagnostic intelligent des microservices
       </p>
     </div>
 
     <div class="system-status-indicator">
-      <span class="pulse-dot active"></span>
-      <span class="status-text">
+      <span class="pulse-dot"></span> <span class="status-text">
         Moteur d'ingestion synchronisé
       </span>
     </div>
@@ -18,83 +18,66 @@
 
   <section class="metrics-grid">
 
-    <!-- TOTAL TRACES -->
     <div class="metric-card card-total">
-
       <div class="card-header-meta">
-        <span class="card-label">Flux Global</span>
-
+        <span class="card-label">
+          Événements Supervités
+        </span>
         <div class="metric-icon-box box-blue">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
           </svg>
         </div>
       </div>
-
       <div class="card-main-value">
-        <span class="counter">{{ totalTraces() }}</span>
-        <span class="unit">traces</span>
-      </div>
-
-      <div class="card-footer-trends">
-        <span class="trend-tag positive">
-          📊 Elasticsearch live
+        <span class="counter">
+          {{ totalTraces() }}
+        </span>
+        <span class="unit">
+          traces
         </span>
       </div>
-
+      <div class="card-footer-trends">
+        <span class="trend-tag">
+          Elasticsearch Live
+        </span>
+      </div>
     </div>
 
-    <!-- ERRORS -->
-    <div
-      class="metric-card card-errors"
-      [class.has-critical-errors]="errorCount() > 0"
-    >
-
+    <div class="metric-card card-errors" [class.has-critical-errors]="errorCount() > 0">
       <div class="card-header-meta">
         <span class="card-label">
-          Taux d'erreurs
+          Incidents Actifs
         </span>
-
         <div class="metric-icon-box box-red">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"/>
           </svg>
         </div>
       </div>
-
-      <div class="card-main-value error-color">
-        <span class="counter">{{ errorCount() }}</span>
-        <span class="unit">incidents</span>
+      <div class="card-main-value">
+        <span class="counter">
+          {{ errorCount() }}
+        </span>
+        <span class="unit">
+          incidents
+        </span>
       </div>
-
       <div class="card-footer-trends">
-
-        <span
-          class="trend-tag destructive"
-          *ngIf="errorCount() > 0"
-        >
+        <span class="trend-tag" *ngIf="errorCount() > 0">
           ⚠️ Action requise
         </span>
-
-        <span
-          class="trend-tag stable"
-          *ngIf="errorCount() === 0"
-        >
-          ✅ Système stable
+        <span class="trend-tag" *ngIf="errorCount() === 0">
+          ✓ Système stable
         </span>
-
       </div>
-
     </div>
 
-    <!-- LATENCY -->
     <div class="metric-card card-latency">
-
       <div class="card-header-meta">
         <span class="card-label">
-          Performance
+          Latence Moyenne
         </span>
-
         <div class="metric-icon-box box-warning">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10"/>
@@ -102,48 +85,90 @@
           </svg>
         </div>
       </div>
-
-      <div class="card-main-value warning-color">
-        <span class="counter">{{ avgLatency() }}</span>
-        <span class="unit">ms</span>
-      </div>
-
-      <div class="card-footer-trends">
-        <span class="trend-tag warning-mode">
-          ⚡ Latence moyenne
+      <div class="card-main-value">
+        <span class="counter">
+          {{ avgLatency() }}
+        </span>
+        <span class="unit">
+          ms
         </span>
       </div>
-
+      <div class="card-footer-trends">
+        <span class="trend-tag">
+          Performance globale
+        </span>
+      </div>
     </div>
 
   </section>
 
-  <main class="dashboard-main-content">
+  <section class="service-health-card">
+    <div class="section-header">
+      <h3>État des Services</h3>
+      <span class="service-count">
+        {{ servicesHealth.length }} microservices cibles
+      </span>
+    </div>
 
-    <article class="chart-card">
-
-      <header class="chart-header">
-
-        <div class="chart-title-group">
-          <h3>Série Temporelle de Latence</h3>
-          <p>Profil de réponse du cluster</p>
-        </div>
-
-        <div class="live-pulse-badge">
-          <span class="ping-animation"></span>
-          <span class="badge-label">
-            STREAMING
+    <div class="services-grid">
+      <div class="service-item" *ngFor="let service of servicesHealth">
+        <div class="service-left">
+          <span class="status-dot" [ngClass]="service.status"></span>
+          <span class="service-name">
+            {{ service.name }}
           </span>
         </div>
+        <span class="latency">
+          {{ service.latency }} ms
+        </span>
+      </div>
+    </div>
+  </section>
 
+  <section class="dashboard-layout">
+
+    <article class="chart-card">
+      <header class="chart-header">
+        <div class="chart-title-group">
+          <h3>Série Temporelle de Latence</h3>
+          <p>Profil de réponse du cluster en temps réel</p>
+        </div>
+        <div class="live-pulse-badge">
+          <span class="ping-animation"></span>
+          <span class="badge-label">STREAMING</span>
+        </div>
       </header>
-
       <div class="chart-container">
         <canvas #latencyChart></canvas>
       </div>
-
     </article>
 
-  </main>
+    <aside class="ai-card">
+      <div class="ai-header">
+        <div>
+          <h3>AI Diagnostic Center</h3>
+          <p>Analyse prédictive</p>
+        </div>
+        <div class="confidence-score">
+          92%
+        </div>
+      </div>
 
+      <div class="ai-list">
+        <div class="ai-item">✓ Root Cause Analysis</div>
+        <div class="ai-item">✓ Team Assignment</div>
+        <div class="ai-item">✓ Recommendation Engine</div>
+        <div class="ai-item">✓ Incident Classification</div>
+      </div>
+
+      <div class="ai-summary">
+        Le moteur IA surveille les traces distribuées, détecte les anomalies et propose automatiquement des actions correctives immédiates.
+      </div>
+
+      <button class="btn-ai" routerLink="/diagnostics">
+        Voir les diagnostics
+      </button>
+    </aside>
+
+  </section>
 </div>

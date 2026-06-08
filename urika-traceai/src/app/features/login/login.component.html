@@ -1,0 +1,91 @@
+<div class="urika-login-container">
+  <div class="urika-login-box">
+    
+    <div class="urika-login-brand">
+      <div class="urika-logo-mock">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#f26622" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="logo-svg">
+          <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+        </svg>
+        <div class="logo-text">
+          <span class="urika">URIKA</span><span class="cloud">CLOUD</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="urika-avatar-selector">
+      
+      <div 
+        class="avatar-card" 
+        [class.active]="selectedRole() === 'ADMIN'"
+        (click)="selectRole('ADMIN')"
+      >
+        <div class="avatar-icon-wrapper">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="avatar-svg">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </div>
+        <span class="avatar-label">DevOps Admin</span>
+      </div>
+
+      <div 
+        class="avatar-card" 
+        [class.active]="selectedRole() === 'DEV'"
+        (click)="selectRole('DEV')"
+      >
+        <div class="avatar-icon-wrapper">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="avatar-svg">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+            <line x1="8" y1="21" x2="16" y2="21"></line>
+            <line x1="12" y1="17" x2="12" y2="21"></line>
+          </svg>
+        </div>
+        <span class="avatar-label">Ingénieur Dev</span>
+      </div>
+
+    </div>
+
+    <div class="urika-login-form">
+      
+      <div class="form-group">
+        <label for="username">Identifiant unique</label>
+        <input 
+          type="text" 
+          id="username" 
+          class="form-input" 
+          [(ngModel)]="username"
+          name="username"
+          [placeholder]="selectedRole() === 'ADMIN' ? 'reda.admin' : 'sara.dev'" 
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input 
+          type="password" 
+          id="password" 
+          class="form-input" 
+          [(ngModel)]="password"
+          name="password"
+          placeholder="••••••••••••" 
+          required
+        />
+      </div>
+
+      <button class="urika-btn-primary" (click)="onLogin()">
+        <span>Se connecter en tant que {{ selectedRole() === 'ADMIN' ? 'Admin' : 'Ingénieur' }}</span>
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </button>
+
+    </div>
+
+    <div class="urika-login-footer">
+      TraceAI platform &bull; Contrôle d'accès RBAC
+    </div>
+
+  </div>
+</div>

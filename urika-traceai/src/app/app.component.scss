@@ -1,187 +1,180 @@
-:host {
-  display: block;
-  height: 100vh;
-
-  --accent: #38bdf8;
-  --border: rgba(255,255,255,0.05);
-  --text-muted: #94a3b8;
-}
-.app-layout {
+/* Layout Global en mode colonne */
+.urika-horizontal-layout {
   display: flex;
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
-  position: relative;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #0b0f19; /* Fond sombre d'origine */
 }
 
-/* Barre Mobile par défaut cachée sur PC */
-.mobile-top-bar {
-  display: none;
-  background: #020617;
-  border-bottom: 1px solid var(--border);
-  padding: 0 1.5rem;
-  align-items: center;
+/* Barre de navigation horizontale */
+.urika-navbar {
+  display: flex;
   justify-content: space-between;
-  height: 60px;
-  width: 100%;
-  position: absolute;
+  align-items: center;
+  height: 70px;
+  background-color: #111827; 
+  padding: 0 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  position: sticky;
   top: 0;
-  left: 0;
-  z-index: 40;
-
-  .logo-area {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    .logo-icon { background: var(--accent); color: #000; padding: 2px 8px; border-radius: 4px; font-weight: 900; font-size: 0.9rem; }
-    .logo-text { font-weight: 700; font-size: 1rem; }
-  }
-
-  .burger-btn {
-    background: transparent;
-    border: none;
-    color: #fff;
-    font-size: 1.5rem;
-    cursor: pointer;
-    padding: 0.5rem;
-  }
+  z-index: 1000;
 }
 
-/* Menu Latéral (PC) */
-.side-nav {
-  width: 260px;
-  background: #020617;
-  border-right: 1px solid var(--border);
+/* Bloc Logo & Éléments de gauche */
+.nav-left {
   display: flex;
-  flex-direction: column;
-  padding: 1.5rem;
-  flex-shrink: 0;
-  z-index: 50;
-  transition: transform 0.3s ease;
-
-  .logo-area {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 3rem;
-    .logo-icon { background: var(--accent); color: #000; padding: 4px 10px; border-radius: 6px; font-weight: 900; }
-    .logo-text { font-weight: 700; font-size: 1.2rem; letter-spacing: -1px; }
-  }
-
-  .nav-links {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-
-    a {
-      color: var(--text-muted);
-      text-decoration: none;
-      padding: 12px;
-      border-radius: 8px;
-      transition: 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-
-      &:hover { background: rgba(255,255,255,0.05); color: #fff; }
-      &.active { background: rgba(56, 189, 248, 0.1); color: var(--accent); font-weight: 600; }
-    }
-  }
-
-  .nav-footer { font-size: 0.7rem; color: #475569; }
+  align-items: center;
+  gap: 1rem; /* Espace équilibré entre le logo et le badge */
 }
 
-/* Zone de contenu principale sécurisée */
-.content-area {
-  flex: 1;
-  overflow-y: auto;
-  padding: 2.5rem;
-  background: #090d16;
+.urika-logo-mock {
   display: flex;
-  justify-content: center; /* Centre le contenu sur les écrans ultra-larges */
+  align-items: center;
+  gap: 8px;
 }
 
-/* Conteneur adaptatif empêchant l'étirement excessif sur PC de bureau */
-.responsive-container {
-  width: 100%;
-  max-width: 1440px; /* Limite supérieure de confort visuel */
+.logo-svg {
+  width: 26px;
+  height: 26px;
+}
+
+.logo-text {
+  font-weight: 800;
+  font-size: 1.15rem;
+  letter-spacing: -0.5px;
+}
+
+.urika { color: #ffffff; }
+.cloud { color: #f26622; }
+
+/* ✨ Badge dynamique pour la Developer Console (Non-Admins) */
+.dev-console-badge {
+  background: rgba(242, 102, 34, 0.1);
+  color: #f26622;
+  border: 1px solid rgba(242, 102, 34, 0.25);
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Menu au centre */
+.nav-links {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  height: 100%;
 }
 
-.sidebar-overlay {
-  display: none;
+.nav-links a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.5rem 1rem;
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 6px;
+  transition: all 0.2s ease;
 }
 
-.ai-active-indicator {
-  margin-bottom: 1rem;
-  background: rgba(56, 189, 248, 0.15);
-  border: 1px solid var(--accent);
-  padding: 10px;
-  border-radius: 8px;
-  color: var(--accent);
+.nav-links a:hover {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.nav-links a.active {
+  color: #ffffff;
+  background-color: rgba(242, 102, 34, 0.12); /* Teinte orange Urika */
+  border: 1px solid rgba(242, 102, 34, 0.25);
+}
+
+.nav-links .icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Bloc de droite (IA + Profil + Logout) */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+/* Badge Moteur IA compressé */
+.ai-engine-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(16, 185, 129, 0.06);
+  border: 1px solid rgba(16, 185, 129, 0.15);
+  padding: 6px 12px;
+  border-radius: 20px;
+}
+
+.pulse-dot {
+  width: 6px;
+  height: 6px;
+  background-color: #10b981;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #10b981;
+}
+
+.engine-info {
+  font-size: 0.8rem;
+  color: #a7f3d0;
+}
+
+/* Infos Session */
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+}
+
+.session-label { color: #64748b; }
+
+.username {
+  color: #f8fafc;
+  font-weight: 600;
+  max-width: 140px; /* Légèrement augmenté pour éviter de couper les noms comme Youssef_ElAlami */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Bouton déconnexion horizontal */
+.btn-logout-horizontal {
+  padding: 6px 14px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  border-radius: 6px;
+  cursor: pointer;
   font-size: 0.8rem;
   font-weight: 600;
-  cursor: pointer;
-  text-align: center;
+  transition: all 0.2s;
 }
 
-/* ==========================================================================
-   BREAKPOINT TABLETTES & MOBILES (Écrans inférieurs à 992px)
-   ========================================================================== */
-@media (max-width: 992px) {
-  .app-layout {
-    flex-direction: column;
-  }
+.btn-logout-horizontal:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+}
 
-  .mobile-top-bar {
-    display: flex; /* Devient visible tout en haut */
-  }
+/* Conteneur de page principal */
+.urika-main-content {
+  flex: 1;
+  padding: 2rem;
+  width: 100%;
+  box-sizing: border-box;
+}
 
-  .content-area {
-    padding: 1.5rem;
-    margin-top: 60px; /* Évite que la barre supérieure ne cache le contenu */
-    height: calc(100vh - 60px);
-  }
-
-  /* Le menu latéral se transforme en panneau coulissant */
-  .side-nav {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: 280px;
-    transform: translateX(-100%); /* Caché sur la gauche par défaut */
-    box-shadow: 4px 0 25px rgba(0,0,0,0.5);
-
-    &.open {
-      transform: translateX(0); /* Coulisse à l'écran quand on clique */
-    }
-  }
-
-  .hide-on-mobile {
-    display: none !important;
-  }
-
-  /* Rideau protecteur en arrière-plan */
-  .sidebar-overlay {
-    display: block;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(4px);
-    z-index: 45;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-
-    &.visible {
-      opacity: 1;
-      pointer-events: auto;
-    }
-  }
+.page-container {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
 }
