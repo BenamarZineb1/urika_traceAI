@@ -5,7 +5,7 @@
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-// 1. Topbar d'application Pro
+// 1. Topbar d'application Pro (Nettoyée & Rééquilibrée)
 .dev-topbar {
   display: flex;
   justify-content: space-between;
@@ -18,25 +18,25 @@
   .brand {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     
     .logo-svg { width: 24px; height: 24px; }
     .logo-text {
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       font-weight: 800;
       letter-spacing: 0.5px;
       font-family: monospace;
       color: #fff;
       .orange { color: #f26622; }
     }
-    .workspace-title { color: #64748b; font-size: 0.85rem; font-weight: 500; }
-    .divider { color: rgba(255,255,255,0.1); }
+    .workspace-title { color: #64748b; font-size: 0.82rem; font-weight: 600; letter-spacing: 0.05em; }
+    .divider { color: rgba(255,255,255,0.1); font-size: 0.9rem; }
   }
 
   .topbar-actions {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 16px;
   }
 }
 
@@ -52,8 +52,8 @@
   color: #94a3b8;
 
   .pulse-dot {
-    width: 6px; height: 6px; background: #f26622; border-radius: 50%;
-    box-shadow: 0 0 8px #f26622;
+    width: 6px; height: 6px; background: #10b981; border-radius: 50%;
+    box-shadow: 0 0 8px #10b981;
   }
   strong { color: #fff; }
 }
@@ -97,7 +97,7 @@
   p { color: #64748b; font-size: 0.9rem; margin: 6px 0 0 0; }
 }
 
-// 3. Kanban
+// 3. Kanban Board
 .kanban-board {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -157,7 +157,7 @@
   h4 { font-size: 0.95rem; margin: 0 0 14px 0; color: #f1f5f9; line-height: 1.4; }
 }
 
-// 4. Cadres d'informations Pro
+// 4. Informations Cadres
 .ai-box {
   background: rgba(242, 102, 34, 0.02);
   border: 1px solid rgba(242, 102, 34, 0.12);
@@ -184,7 +184,7 @@
   p { font-size: 0.8rem; color: #94a3b8; margin: 4px 0 0 0; }
 }
 
-// 5. Boutons de Contrôle
+// 5. Boutons Actions
 .btn-action {
   width: 100%; padding: 8px 12px; border: none; border-radius: 4px;
   font-size: 0.8rem; font-weight: 600; cursor: pointer;
@@ -241,7 +241,7 @@
   }
 }
 
-// 7. AI Assistant Flottant (Chatbox)
+// 7. AI Assistant Flottant Chatbox
 .ai-assistant-wrapper {
   position: fixed;
   bottom: 24px;
@@ -298,7 +298,6 @@
     align-self: flex-start;
     .message-bubble { background: #16202c; color: #cbd5e1; border: 1px solid rgba(255,255,255,0.02); }
 
-    // ✅ AJOUT : Style et animation fluide du Typing Indicator
     .typing-indicator {
       display: flex;
       align-items: center;
@@ -311,7 +310,7 @@
       span {
         width: 6px;
         height: 6px;
-        background-color: #f26622; // Teinte orange distincte de l'assistant TraceAI
+        background-color: #f26622;
         border-radius: 50%;
         display: inline-block;
         animation: typing-bounce 1.4s infinite ease-in-out both;
@@ -345,12 +344,12 @@
   }
 }
 
-// Outils Génériques
+// Outils
 .icon-sm { width: 16px; height: 16px; }
 .icon-xs { width: 12px; height: 12px; }
 .empty-state { text-align: center; color: #475569; font-size: 0.8rem; padding: 24px 0; }
 
-// Animations Systèmes
+// Animations
 @keyframes pulse-anim {
   0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
   70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
@@ -362,7 +361,6 @@
   to { transform: translateY(0); opacity: 1; }
 }
 
-// ✅ AJOUT : Keyframes de l'animation de vague des 3 points
 @keyframes typing-bounce {
   0%, 80%, 100% { 
     transform: scale(0.6);

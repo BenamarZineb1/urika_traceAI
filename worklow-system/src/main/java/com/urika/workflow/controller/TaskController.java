@@ -7,6 +7,7 @@ import com.urika.workflow.service.TaskManagementService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -34,5 +35,28 @@ public class TaskController {
     @PutMapping("/{id}/complete")
     public Task completeTask(@PathVariable Long id) {
         return taskManagementService.completeTask(id);
+    }
+
+    // ✅ AJOUT 1 : Synchronisation du statut (IN_PROGRESS, etc.)
+    @PutMapping("/{id}/status")
+    public Task updateStatus(@PathVariable Long id, @RequestBody Map<String, String> payload) {
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Tâche introuvable avec l'ID : " + id));
+        
+        // CORRECTION : On assigne directement le statut en tant que String
+        task.setStatus(payload.get("status"));
+
+        return taskRepository.save(task);
+    }
+
+    // ✅ AJOUT 2 : Sauvegarde des notes / description depuis la modale
+    @PatchMapping("/{id}/description")
+    public Task updateDescription(@PathVariable Long id, @RequestBody Map<String, String> payload) {
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Tâche introuvable avec l'ID : " + id));
+        
+        task.setDescription(payload.get("description"));
+        
+        return taskRepository.save(task);
     }
 }

@@ -62,24 +62,14 @@
       </section>
 
       <div *ngIf="loading" class="premium-loading-container">
-        
-        <div class="cyber-ai-avatar-wrapper">
-          <div class="scanner-line"></div>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="cyber-ai-icon">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-            <path stroke-linecap="round" stroke-linejoin="round" d="M10 9h4m-4 4h4m-4-8h4M9 17h6" />
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12M6 10h12M6 14h12" />
-          </svg>
-          <div class="glow-pulse-ring"></div>
+        <div class="clean-spinner-wrapper">
+          <div class="spinner-ring-bg"></div>
+          <div class="spinner-ring"></div>
         </div>
         
         <div class="loading-text-block">
-          <p class="loading-message">
-            Analyse cognitive en cours via Ollama...
-          </p>
-          <span class="metric-label estimated-time">
-            Temps estimé : ~5 secondes
-          </span>
+          <p class="loading-message">Analyse cognitive via Ollama...</p>
+          <p class="current-step-detail">{{ currentStepMessage }}</p>
         </div>
 
         <div class="progress-bar-track">
@@ -112,7 +102,7 @@
 
             <div class="orchestration-action-panel">
               <div class="routing-details">
-                <span class="metric-label">Équipe responsable :</span>
+                <span class="metric-label">Équipe responsable</span>
                 <strong class="routing-team">{{ analysis.suggested_role }}</strong>
               </div>
 
@@ -130,12 +120,14 @@
       </div>
 
       <footer *ngIf="!loading && analysis" class="ai-modal-footer">
-        <div class="context-metric footer-confidence-metric">
+        <div class="footer-confidence-metric">
           <span class="metric-label">
             Indice de confiance LLM : <span class="confidence-value">{{ $any(analysis).confidence || 92 }}%</span>
           </span>
-          <div class="confidence-bar-track">
-            <div class="progress-bar-fill" [style.width.%]="$any(analysis).confidence || 92"></div>
+          <div class="confidence-bar-wrapper">
+            <div class="confidence-bar-track">
+              <div class="progress-bar-fill" [style.width.%]="$any(analysis).confidence || 92"></div>
+            </div>
           </div>
         </div>
       </footer>

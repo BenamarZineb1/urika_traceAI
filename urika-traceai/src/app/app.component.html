@@ -1,8 +1,6 @@
 @if (!authService.getToken()) {
   <router-outlet></router-outlet>
-}
-
-@else {
+} @else {
   <div class="urika-horizontal-layout">
 
     <header class="urika-navbar">
@@ -25,17 +23,19 @@
 
       <nav class="nav-links">
         
-        <a routerLink="/dashboard" routerLinkActive="active">
-          <span class="icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
-              <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
-              <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
-              <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
-            </svg>
-          </span>
-          Dashboard
-        </a>
+        @if (isAdmin()) {
+          <a routerLink="/dashboard" routerLinkActive="active">
+            <span class="icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+                <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+                <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+              </svg>
+            </span>
+            Dashboard
+          </a>
+        }
 
         @if (isAdmin()) {
           <a routerLink="/explorer" routerLinkActive="active">
@@ -65,28 +65,35 @@
           </a>
         }
 
-        <a routerLink="/workflow" routerLinkActive="active">
-          <span class="icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="3" width="6" height="6" rx="1"></rect>
-              <rect x="15" y="15" width="6" height="6" rx="1"></rect>
-              <path d="M6 9v3a3 3 0 0 0 3 3h6"></path>
-            </svg>
-          </span>
-          Workflow
-        </a>
+        @if (isAdmin()) {
+          <a routerLink="/workflow" routerLinkActive="active">
+            <span class="icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="6" height="6" rx="1"></rect>
+                <rect x="15" y="15" width="6" height="6" rx="1"></rect>
+                <path d="M6 9v3a3 3 0 0 0 3 3h6"></path>
+              </svg>
+            </span>
+            Workflow
+          </a>
+        }
       </nav>
 
       <div class="nav-right">
-        <div class="ai-engine-badge">
-          <span class="pulse-dot"></span>
-          <span class="engine-info">
-            IA : <strong>{{ aiModel }}</strong> ({{ aiConfidence }}%)
-          </span>
-        </div>
+        
+        @if (isAdmin()) {
+          <div class="ai-engine-badge">
+            <span class="pulse-dot"></span>
+            <span class="engine-info">
+              IA : <strong>{{ aiModel }}</strong> ({{ aiConfidence }}%)
+            </span>
+          </div>
+        }
 
         <div class="user-profile">
-          <span class="session-label">Session :</span>
+          @if (isAdmin()) {
+            <span class="session-label">Session :</span>
+          }
           <span class="username" [title]="authService.getCurrentUser()">
             {{ authService.getCurrentUser() }}
           </span>
@@ -105,7 +112,7 @@
       </div>
     </main>
 
-    @if (uiService.selectedTrace(); as activeTrace) {
+    @if (isAdmin() && uiService.selectedTrace(); as activeTrace) {
       <app-ai-panel 
         [trace]="activeTrace" 
         (close)="uiService.closeAnalysis()">

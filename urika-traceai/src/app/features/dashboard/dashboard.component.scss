@@ -9,39 +9,26 @@
   --primary: #2563eb;
   --primary-soft: rgba(37,99,235,.12);
   
-  /* --- COULEURS LOGO URIKA --- */
   --accent: #f26622; 
-  --accent-soft: rgba(242, 102, 34, 0.12);
-
   --success: #10b981;
   --warning: #f59e0b;
   --danger: #ef4444;
-  --transition: all .25s ease;
+  --transition: all .25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ===================================================== */
-/* WRAPPER */
+/* WRAPPER GLOBAL */
 /* ===================================================== */
 .dashboard-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 1rem;       /* OPTIMISÉ : Écarts réduits de 1.5rem à 1rem */
-  padding: 1rem;   /* OPTIMISÉ : Padding réduit de 1.5rem à 1rem */
-  min-height: auto; /* OPTIMISÉ : Supprime l'espace vide forcé en bas de page */
+  gap: 1.25rem;
+  padding: 1.25rem;
   background:
-    radial-gradient(
-      circle at top left,
-      rgba(37,99,235,.12),
-      transparent 30%
-    ),
-    radial-gradient(
-      circle at bottom right,
-      rgba(242,102,34,.06), /* Harmonisé avec l'orange Urika */
-      transparent 30%
-    ),
+    radial-gradient(circle at top left, rgba(37,99,235,.07), transparent 40%),
+    radial-gradient(circle at bottom right, rgba(242,102,34,.04), transparent 40%),
     var(--bg-dashboard);
-
-  animation: pageAppear .5s ease;
+  animation: pageAppear .4s ease-out;
 }
 
 /* ===================================================== */
@@ -69,7 +56,7 @@
 .view-header h1 {
   margin: 0;
   color: var(--text-main);
-  font-size: 1.8rem; /* OPTIMISÉ : Un poil plus compact */
+  font-size: 1.8rem;
   font-weight: 800;
 }
 
@@ -86,7 +73,7 @@
   gap: .75rem;
   padding: .6rem .9rem;
   border-radius: 999px;
-  background: rgba(16,185,129,.08);
+  background: rgba(16,185,129,.06);
   border: 1px solid rgba(16,185,129,.15);
 }
 
@@ -114,26 +101,40 @@
 }
 
 /* ===================================================== */
-/* KPI */
+/* STRUCTURE DE LA GRILLE PRINCIPALE (image_1cf4a6.png) */
 /* ===================================================== */
+.main-dashboard-grid {
+  display: grid;
+  grid-template-columns: 2.8fr 1.2fr; /* Ratio parfait pour laisser l'IA à droite */
+  gap: 1.25rem;
+  align-items: stretch;
+}
+
+.left-content-zone {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* KPIs À GAUCHE */
 .metrics-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
 }
 
 .metric-card {
   background: linear-gradient(145deg, var(--surface-card), var(--surface-base));
   border: 1px solid var(--border-subtle);
-  border-radius: 16px;
-  padding: 1.15rem; /* OPTIMISÉ : Moins de rembourrage interne */
+  border-radius: 14px;
+  padding: 1.5rem;
   position: relative;
   overflow: hidden;
   transition: var(--transition);
 }
 
 .metric-card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-2px);
   border-color: var(--border-bright);
 }
 
@@ -143,18 +144,17 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 2px;
+  height: 3px;
 }
 
 .card-total::before { background: var(--primary); }
-.card-errors::before { background: var(--danger); } /* Rendu cohérent avec l'erreur (rouge) */
-.card-latency::before { background: var(--accent); } /* Aligné avec l'orange URIKA */
+.card-errors::before { background: var(--danger); }
 
 .card-header-meta {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 .card-label {
@@ -166,8 +166,8 @@
 }
 
 .metric-icon-box {
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -175,267 +175,147 @@
 }
 
 .metric-icon-box svg {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
 }
 
-.box-blue {
-  background: var(--primary-soft);
-  color: var(--primary);
-}
-
-.box-red {
-  background: rgba(239, 68, 68, 0.12);
-  color: var(--danger);
-}
-
-.box-warning {
-  background: var(--accent-soft);
-  color: var(--accent);
-}
+.box-blue { background: var(--primary-soft); color: var(--primary); }
+.box-red { background: rgba(239, 68, 68, 0.12); color: var(--danger); }
 
 .card-main-value {
   display: flex;
   align-items: baseline;
   gap: .5rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
 }
 
 .counter {
-  font-size: 2.5rem; /* OPTIMISÉ : Légèrement réduit pour l'espace */
+  font-size: 2.8rem;
   font-weight: 800;
   color: white;
   line-height: 1;
 }
 
-.unit {
-  color: var(--text-muted);
-  font-size: .85rem;
-}
+.unit { color: var(--text-muted); font-size: .9rem; }
+.card-footer-trends { padding-top: .75rem; border-top: 1px solid rgba(255,255,255,.03); }
+.trend-tag { color: var(--text-muted); font-size: .8rem; }
 
-.card-footer-trends {
-  padding-top: .5rem;
-  border-top: 1px solid rgba(255,255,255,.04);
-}
-
-.trend-tag {
-  color: var(--text-muted);
-  font-size: .8rem;
-}
-
-/* Dynamique si erreurs critiques */
-.card-errors.has-critical-errors {
-  border-color: rgba(239, 68, 68, 0.3);
-  box-shadow: 0 4px 20px rgba(239, 68, 68, 0.05);
-}
-
-/* ===================================================== */
-/* HEALTH */
-/* ===================================================== */
+/* SERVICES À GAUCHE */
 .service-health-card {
   background: linear-gradient(145deg, var(--surface-card), var(--surface-base));
   border: 1px solid var(--border-subtle);
-  border-radius: 16px;
-  padding: 1.15rem;
+  border-radius: 14px;
+  padding: 1.5rem;
+  flex-grow: 1; /* Permet de s'étirer harmonieusement */
 }
 
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
-.section-header h3 {
-  margin: 0;
-  font-size: 1.15rem;
-  color: white;
-}
-
-.service-count {
-  color: var(--text-muted);
-  font-size: .85rem;
-}
+.section-header h3 { margin: 0; font-size: 1.2rem; color: white; font-weight: 700; }
+.service-count { color: var(--text-muted); font-size: .85rem; }
 
 .services-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* OPTIMISÉ : Aligné en ligne plutôt qu'en colonne pour économiser de la hauteur */
-  gap: .75rem;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
 }
 
 .service-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: .75rem .9rem;
+  padding: 1rem 1.25rem;
   border-radius: 10px;
   background: rgba(255,255,255,.02);
+  border: 1px solid rgba(255,255,255,.01);
   transition: var(--transition);
 }
 
 .service-item:hover {
   background: rgba(255,255,255,.04);
+  border-color: var(--border-subtle);
 }
 
-.service-left {
-  display: flex;
-  align-items: center;
-  gap: .75rem;
-}
-
-.status-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-}
-
+.service-left { display: flex; align-items: center; gap: .85rem; }
+.status-dot { width: 8px; height: 8px; border-radius: 50%; }
 .status-dot.healthy { background: var(--success); }
 .status-dot.warning { background: var(--warning); }
 .status-dot.critical { background: var(--danger); }
-
-.service-name {
-  color: white;
-  font-size: 0.9rem;
-}
-
-.latency {
-  color: var(--text-muted);
-  font-size: 0.85rem;
-}
+.service-name { color: white; font-size: 0.95rem; font-weight: 500; }
 
 /* ===================================================== */
-/* MAIN GRID */
-/* ===================================================== */
-.dashboard-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) 340px;
-  gap: 1rem;
-}
-
-/* ===================================================== */
-/* CHART */
-/* ===================================================== */
-.chart-card {
-  background: linear-gradient(145deg, var(--surface-card), var(--surface-base));
-  border: 1px solid var(--border-subtle);
-  border-radius: 16px;
-  padding: 1.15rem;
-}
-
-.chart-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.75rem;
-}
-
-.chart-title-group h3 {
-  margin: 0;
-  font-size: 1.15rem;
-  color: white;
-}
-
-.chart-title-group p {
-  color: var(--text-muted);
-  margin-top: .25rem;
-  margin-bottom: 0;
-  font-size: 0.85rem;
-}
-
-.live-pulse-badge {
-  display: flex;
-  align-items: center;
-  gap: .5rem;
-  padding: .3rem .6rem;
-  border-radius: 999px;
-  background: rgba(242, 102, 34, 0.1); /* Match Orange URIKA */
-  color: var(--accent);
-  font-size: 0.75rem;
-  font-weight: 700;
-}
-
-.ping-animation {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--accent);
-  animation: blink 1.5s infinite;
-}
-
-.chart-container {
-  position: relative;
-  height: 260px; /* OPTIMISÉ : Réduit de 420px à 260px pour éviter le scroll vertical global */
-}
-
-/* ===================================================== */
-/* AI PANEL */
+/* BLOC AI DIAGNOSTIC CENTER (S'ÉTIRE À DROITE) */
 /* ===================================================== */
 .ai-card {
   background: linear-gradient(145deg, var(--surface-card), var(--surface-base));
   border: 1px solid var(--border-subtle);
-  border-radius: 16px;
-  padding: 1.15rem;
+  border-radius: 14px;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
+  height: 100%; /* S'aligne parfaitement sur toute la hauteur */
 }
 
 .ai-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
-.ai-header h3 {
-  margin: 0;
-  font-size: 1.15rem;
-  color: white;
-}
-
-.ai-header p {
-  margin-top: .25rem;
-  margin-bottom: 0;
-  color: var(--text-muted);
-  font-size: 0.85rem;
-}
+.ai-header h3 { margin: 0; font-size: 1.2rem; color: white; font-weight: 700; }
+.ai-header p { margin-top: .25rem; margin-bottom: 0; color: var(--text-muted); font-size: 0.85rem; }
 
 .confidence-score {
-  width: 54px;   /* OPTIMISÉ : Légèrement plus petit */
-  height: 54px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
-  border: 2.5px solid var(--success);
+  border: 2px solid var(--success);
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   font-weight: 700;
   font-size: 0.9rem;
+  background: rgba(16, 185, 129, 0.05);
 }
 
 .ai-list {
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;   /* OPTIMISÉ : Liste plus dense */
-  margin-bottom: 1rem;
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
 }
 
 .ai-item {
-  color: #d1fae5;
-  font-size: 0.85rem;
+  color: #e2e8f0;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.check-icon {
+  color: var(--success);
+  font-weight: bold;
 }
 
 .ai-summary {
   color: var(--text-muted);
-  line-height: 1.5;
-  margin-bottom: 1rem;
-  font-size: 0.85rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  font-size: 0.88rem;
 }
 
 .btn-ai {
-  margin-top: auto;
+  margin-top: auto; /* Pousse le bouton tout en bas de la carte */
   border: none;
   border-radius: 10px;
-  padding: .75rem;
+  padding: .85rem;
   cursor: pointer;
   background: var(--accent);
   color: white;
@@ -446,55 +326,57 @@
 
 .btn-ai:hover {
   background: #ea580c;
+  transform: translateY(-1px);
 }
 
 /* ===================================================== */
-/* RESPONSIVE */
+/* ZONE BASSE (GRAPHIQUE HISTORIQUE) */
+/* ===================================================== */
+.dashboard-footer-chart {
+  margin-top: 0.5rem;
+}
+
+.chart-card {
+  background: linear-gradient(145deg, var(--surface-card), var(--surface-base));
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  padding: 1.5rem;
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.chart-title-group h3 { margin: 0; font-size: 1.2rem; color: white; }
+.chart-title-group p { color: var(--text-muted); margin-top: .25rem; margin-bottom: 0; font-size: 0.85rem; }
+.chart-container { position: relative; height: 220px; }
+
+/* ===================================================== */
+/* RESPONSIVE DESIGN FLUIDE */
 /* ===================================================== */
 @media (max-width: 1200px) {
-  .dashboard-layout {
-    grid-template-columns: 1fr;
+  .main-dashboard-grid {
+    grid-template-columns: 1fr; /* Empilement élégant sur petits écrans */
   }
-  .services-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .ai-card {
+    height: auto;
   }
 }
 
 @media (max-width: 768px) {
-  .metrics-grid {
-    grid-template-columns: 1fr;
-  }
-  .services-grid {
-    grid-template-columns: 1fr;
-  }
+  .metrics-grid { grid-template-columns: 1fr; }
+  .services-grid { grid-template-columns: 1fr; }
 }
 
-/* ===================================================== */
-/* ANIMATIONS */
-/* ===================================================== */
 @keyframes pageAppear {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes ping {
-  from {
-    transform: scale(1);
-    opacity: 1;
-  }
-  to {
-    transform: scale(2.5);
-    opacity: 0;
-  }
-}
-
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: .4; }
+  from { transform: scale(1); opacity: 1; }
+  to { transform: scale(2.2); opacity: 0; }
 }
